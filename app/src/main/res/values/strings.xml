@@ -1,3 +1,20 @@
 <resources>
     <string name="app_name">MyMedia</string>
+    <string name="permission_all_granted">全部权限已获取成功</string>
+    <string name="permission_denied_list">以下权限被拒绝：%1$s</string>
+    <string name="music">音乐</string>
+    <string name="home">首页</string>
+    <string name="video">视频</string>
+    <string name="setting">设置</string>
+    <string name="scan_video">扫描视频</string>
+    <string name="scan_media">扫描音乐</string>
+    <string name="scan_title">扫描媒体</string>
+    <string name="scan_action">开始\n扫描</string>
+    <string name="scan_results">扫描结果</string>
+    <string name="no_results">暂无扫描结果</string>
+    <string name="recent_play">最近播放</string>
+    <string name="play">播放</string>
+    <string name="continue_playing">继续播放</string>
+    <string name="library_statistics">媒体库统计</string>
+    <string name="occupied_space">占用空间</string>
 </resources>

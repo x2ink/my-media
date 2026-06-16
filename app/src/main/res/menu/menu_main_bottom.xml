@@ -3,20 +3,20 @@
     <item
         android:id="@+id/tab_home"
         android:icon="@android:drawable/ic_menu_manage"
-        android:title="首页" />
+        android:title="@string/home" />
     <item
-        android:id="@+id/tab_music"
+        android:id="@+id/tab_audio"
         android:icon="@android:drawable/ic_media_play"
-        android:title="音乐" />
+        android:title="@string/music" />
 
     <item
         android:id="@+id/tab_video"
         android:icon="@android:drawable/ic_menu_slideshow"
-        android:title="视频" />
+        android:title="@string/video" />
 
     <item
         android:id="@+id/tab_setting"
         android:icon="@android:drawable/ic_menu_manage"
-        android:title="设置" />
+        android:title="@string/setting" />
 
 </menu>

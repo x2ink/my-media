@@ -13,9 +13,10 @@
         android:id="@+id/search_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="搜索视频"
+        android:hint="搜索音乐"
         style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
         app:startIconDrawable="@android:drawable/ic_menu_search"
+        app:cardCornerRadius="24dp"
         android:layout_marginBottom="12dp">
 
         <com.google.android.material.textfield.TextInputEditText
@@ -51,21 +52,15 @@
                 android:layout_height="wrap_content"
                 android:text="最近播放"
                 style="@style/Widget.Material3.Chip.Filter" />
-
-            <com.google.android.material.chip.Chip
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="按大小"
-                style="@style/Widget.Material3.Chip.Filter" />
         </com.google.android.material.chip.ChipGroup>
     </HorizontalScrollView>
 
-    <!-- 3. 视频列表 -->
+    <!-- 3. 音乐列表 -->
     <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/rv_video_list"
+        android:id="@+id/rv_audio_list"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
-        tools:listitem="@layout/item_media_grid" />
+        tools:listitem="@layout/item_media_linear" />
 
 </LinearLayout>
