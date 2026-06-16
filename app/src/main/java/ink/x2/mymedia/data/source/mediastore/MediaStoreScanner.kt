@@ -2,6 +2,7 @@ package ink.x2.mymedia.data.source.mediastore
 
 import android.content.ContentUris
 import android.content.Context
+import android.net.Uri
 import android.provider.MediaStore
 import com.orhanobut.logger.Logger
 import dagger.hilt.android.qualifiers.ApplicationContext
@@ -16,7 +17,17 @@ class MediaStoreScanner @Inject constructor(
     @ApplicationContext private val context: Context,
     @IoDispatcher private val ioDispatcher: CoroutineDispatcher
 ) {
-
+    private fun getEmbeddedPicture(uri: Uri): ByteArray? {
+        return try {
+            val retriever = android.media.MediaMetadataRetriever()
+            retriever.setDataSource(context, uri)
+            val bytes = retriever.embeddedPicture
+            retriever.release()
+            bytes
+        } catch (e: Exception) {
+            null
+        }
+    }
     suspend fun scanMedia(type: MediaType): List<LocalMediaItem> = withContext(ioDispatcher) {
         val mediaList = mutableListOf<LocalMediaItem>()
 
@@ -118,7 +129,13 @@ class MediaStoreScanner @Inject constructor(
                     size = cursor.getLong(sizeColumn),
                     mimeType = cursor.getString(mimeTypeColumn),
                     dateAdded = cursor.getLong(dateAddedColumn),
-                    albumId = albumIdColumn,
+                    albumId = cursor.getLong(albumIdColumn),
+                    albumBytes = if (type == MediaType.AUDIO) {
+                        getEmbeddedPicture(uri)
+                    } else {
+                        null
+                    },
+                    mediaType = type
                 )
 
                 mediaList.add(item)

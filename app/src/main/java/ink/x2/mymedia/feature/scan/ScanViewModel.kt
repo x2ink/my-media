@@ -13,16 +13,15 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
-
+data class MediaItemUiState(
+    val media: LocalMediaItem,
+    val isSelected: Boolean = false
+)
 @HiltViewModel
 class ScanViewModel @Inject constructor(
     private val scanMediaUseCase: ScanMediaUseCase,
     savedStateHandle: SavedStateHandle
 ) : ViewModel() {
-    data class MediaItemUiState(
-        val media: LocalMediaItem,
-        val isSelected: Boolean = false
-    )
     private val _mediaList = MutableStateFlow<List<MediaItemUiState>>(emptyList())
     val mediaList: StateFlow<List<MediaItemUiState>> = _mediaList.asStateFlow()
 

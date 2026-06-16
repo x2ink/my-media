@@ -8,6 +8,7 @@ import androidx.activity.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.orhanobut.logger.Logger
 import dagger.hilt.android.AndroidEntryPoint
 import ink.x2.mymedia.core.base.BaseActivity
@@ -22,6 +23,7 @@ class ScanActivity : BaseActivity<ActivityScanBinding>() {
         ActivityScanBinding.inflate(layoutInflater)
     }
     private val viewModel: ScanViewModel by viewModels()
+    private lateinit var scanAdapter: ScanResultListAdapter
     companion object {
         fun startFrom(activity: Context, mediaType: MediaType) {
             val intent = Intent(activity, ScanActivity::class.java)
@@ -34,8 +36,14 @@ class ScanActivity : BaseActivity<ActivityScanBinding>() {
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
         initListeners()
+        initRecyclerView()
         observeViewModel()
 
+    }
+    private fun initRecyclerView() {
+        scanAdapter = ScanResultListAdapter()
+        binding.rvScanResults.layoutManager = LinearLayoutManager(this)
+        binding.rvScanResults.adapter = scanAdapter
     }
     fun initListeners(){
         binding.btnScan.setOnClickListener {
@@ -47,8 +55,7 @@ class ScanActivity : BaseActivity<ActivityScanBinding>() {
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
                 viewModel.mediaList.collect { list ->
-                    Logger.d("扫描到媒体数量: ${list.size}")
-                    Logger.d(list)
+                    scanAdapter.submitList(list)
                 }
             }
         }

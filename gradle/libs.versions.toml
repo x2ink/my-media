@@ -17,7 +17,7 @@ kotlinxCoroutines = "1.8.1"
 fragmentKtx = "1.8.5"
 activityKtx = "1.9.3"
 constraintlayout = "2.2.1"
-room = "2.6.1"
+room = "2.8.4"
 [libraries]
 androidx-room-runtime = { group = "androidx.room", name = "room-runtime", version.ref = "room" }
 androidx-room-ktx = { group = "androidx.room", name = "room-ktx", version.ref = "room" }

@@ -1,12 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="72dp"
-    android:orientation="horizontal"
-    android:gravity="center_vertical"
-    android:padding="12dp"
     android:background="?attr/selectableItemBackground">
+
+    <!-- Checkbox for Selection -->
+    <com.google.android.material.checkbox.MaterialCheckBox
+        android:id="@+id/cb_select"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:minWidth="0dp"
+        android:minHeight="0dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent" />
 
     <!-- Thumbnail / Icon -->
     <com.google.android.material.imageview.ShapeableImageView
@@ -15,20 +24,28 @@
         android:layout_height="48dp"
         android:background="?attr/colorSurfaceVariant"
         android:scaleType="center"
-        android:src="@android:drawable/ic_media_play"
+        android:src="@drawable/ic_music"
         app:shapeAppearanceOverlay="@style/ShapeAppearance.Material3.Corner.Small"
-        android:layout_marginEnd="12dp" />
+        app:layout_constraintStart_toEndOf="@id/cb_select"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        android:layout_marginStart="12dp" />
 
-    <!-- Details -->
+    <!-- Details: Title & Subtitle -->
     <LinearLayout
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_weight="1"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        app:layout_constraintStart_toEndOf="@id/iv_media_icon"
+        app:layout_constraintEnd_toStartOf="@id/btn_play"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        android:layout_marginStart="12dp"
+        android:layout_marginEnd="12dp">
 
         <TextView
             android:id="@+id/tv_media_title"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="媒体名称"
             android:textAppearance="?attr/textAppearanceBodyLarge"
@@ -38,22 +55,52 @@
 
         <TextView
             android:id="@+id/tv_media_subtitle"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="说明 / 格式"
+            android:text="作者 / 时长 / 大小"
             android:textAppearance="?attr/textAppearanceBodyMedium"
             android:textColor="?android:attr/textColorSecondary"
-            android:layout_marginTop="2dp" />
+            android:layout_marginTop="2dp"
+            android:ellipsize="end"
+            android:singleLine="true" />
     </LinearLayout>
 
-    <!-- Options Button -->
+    <!-- Play Button -->
     <ImageView
-        android:id="@+id/btn_more"
+        android:id="@+id/btn_play"
         android:layout_width="40dp"
         android:layout_height="40dp"
         android:padding="8dp"
-        android:src="@android:drawable/ic_menu_more"
+        android:src="@drawable/ic_play"
         android:background="?attr/selectableItemBackgroundBorderless"
-        android:contentDescription="更多选项"
-        android:visibility="gone" />
-</LinearLayout>
+        android:contentDescription="播放"
+        app:tint="?attr/colorPrimary"
+        app:layout_constraintEnd_toStartOf="@id/btn_edit"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        android:layout_marginEnd="4dp" />
+
+    <!-- Edit Button -->
+    <ImageView
+        android:id="@+id/btn_edit"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:padding="8dp"
+        android:src="@drawable/ic_edit"
+        android:background="?attr/selectableItemBackgroundBorderless"
+        android:contentDescription="编辑"
+        app:tint="?attr/colorOnSurfaceVariant"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent" />
+
+    <!-- Legacy Hidden View for Backwards Compatibility -->
+    <ImageView
+        android:id="@+id/btn_more"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:visibility="gone"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

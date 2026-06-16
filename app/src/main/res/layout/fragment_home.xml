@@ -48,7 +48,7 @@
                         android:layout_height="48dp"
                         android:background="?attr/colorSurfaceVariant"
                         android:scaleType="center"
-                        android:src="@android:drawable/ic_media_play"
+                        android:src="@drawable/ic_play"
                         app:shapeAppearanceOverlay="@style/ShapeAppearance.Material3.Corner.Small"
                         android:layout_marginEnd="12dp" />
 
