@@ -85,6 +85,9 @@ class PlayingActivity  : BaseActivity<ActivityPlayingBinding>(){
             }
 
         })
+        binding.toolbar.setNavigationOnClickListener {
+            finish()
+        }
     }
     fun observeViewModel(){
         lifecycleScope.launch {

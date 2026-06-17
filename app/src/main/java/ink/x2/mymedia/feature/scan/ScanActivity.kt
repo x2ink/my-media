@@ -11,6 +11,7 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.SimpleItemAnimator
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import dagger.hilt.android.AndroidEntryPoint
 import ink.x2.mymedia.R
@@ -91,6 +92,7 @@ class ScanActivity : BaseActivity<ActivityScanBinding>() {
             )
         )
         binding.rvScanResults.adapter = scanAdapter
+        (binding.rvScanResults.itemAnimator as? SimpleItemAnimator)?.supportsChangeAnimations = false
     }
 
     fun initListeners() {
@@ -100,6 +102,12 @@ class ScanActivity : BaseActivity<ActivityScanBinding>() {
         when(viewModel.getMediaType()){
             MediaType.AUDIO->binding.toolbar.title=getString(R.string.scan_audio)
             MediaType.VIDEO->binding.toolbar.title=getString(R.string.scan_video)
+        }
+        binding.toolbar.setNavigationOnClickListener {
+            finish()
+        }
+        binding.cbSelectAll.setOnCheckedChangeListener { button, bool ->
+            viewModel.updateListSelectAll(bool)
         }
     }
 

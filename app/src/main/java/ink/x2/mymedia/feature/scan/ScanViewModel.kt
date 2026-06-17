@@ -69,6 +69,11 @@ class ScanViewModel @Inject constructor(
         val newMediaItem=mediaItem.copy(isSelected = isChecked)
         updateMediaList(newMediaItem)
     }
+    fun updateListSelectAll(isAllSelectL: Boolean){
+        _mediaList.value.forEach {
+            updateListSelect(it,isAllSelectL)
+        }
+    }
     fun openPlayingActivity(media: MediaItemUiState){
         viewModelScope.launch {
             _openPlayingEvent.emit(media)
