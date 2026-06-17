@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="72dp"
+    android:layout_height="wrap_content"
     android:background="?attr/selectableItemBackground">
 
     <!-- Checkbox for Selection -->
@@ -11,8 +11,8 @@
         android:id="@+id/cb_select"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:minWidth="0dp"
-        android:minHeight="0dp"
+        android:minWidth="@dimen/dimens_0"
+        android:minHeight="@dimen/dimens_0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toBottomOf="parent" />
@@ -20,8 +20,8 @@
     <!-- Thumbnail / Icon -->
     <com.google.android.material.imageview.ShapeableImageView
         android:id="@+id/iv_media_icon"
-        android:layout_width="48dp"
-        android:layout_height="48dp"
+        android:layout_width="@dimen/dimens_48"
+        android:layout_height="@dimen/dimens_48"
         android:background="?attr/colorSurfaceVariant"
         android:scaleType="center"
         android:src="@drawable/ic_music"
@@ -29,19 +29,19 @@
         app:layout_constraintStart_toEndOf="@id/cb_select"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"
-        android:layout_marginStart="12dp" />
+        android:layout_marginStart="@dimen/dimens_12" />
 
     <!-- Details: Title & Subtitle -->
     <LinearLayout
-        android:layout_width="0dp"
+        android:layout_width="@dimen/dimens_0"
         android:layout_height="wrap_content"
         android:orientation="vertical"
         app:layout_constraintStart_toEndOf="@id/iv_media_icon"
-        app:layout_constraintEnd_toStartOf="@id/btn_play"
+        app:layout_constraintEnd_toStartOf="@id/btn_edit"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"
-        android:layout_marginStart="12dp"
-        android:layout_marginEnd="12dp">
+        android:layout_marginStart="@dimen/dimens_12"
+        android:layout_marginEnd="@dimen/dimens_12">
 
         <TextView
             android:id="@+id/tv_media_title"
@@ -60,32 +60,18 @@
             android:text="作者 / 时长 / 大小"
             android:textAppearance="?attr/textAppearanceBodyMedium"
             android:textColor="?android:attr/textColorSecondary"
-            android:layout_marginTop="2dp"
+            android:layout_marginTop="@dimen/dimens_2"
             android:ellipsize="end"
             android:singleLine="true" />
     </LinearLayout>
 
-    <!-- Play Button -->
-    <ImageView
-        android:id="@+id/btn_play"
-        android:layout_width="40dp"
-        android:layout_height="40dp"
-        android:padding="8dp"
-        android:src="@drawable/ic_play"
-        android:background="?attr/selectableItemBackgroundBorderless"
-        android:contentDescription="播放"
-        app:tint="?attr/colorPrimary"
-        app:layout_constraintEnd_toStartOf="@id/btn_edit"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent"
-        android:layout_marginEnd="4dp" />
 
     <!-- Edit Button -->
     <ImageView
         android:id="@+id/btn_edit"
-        android:layout_width="40dp"
-        android:layout_height="40dp"
-        android:padding="8dp"
+        android:layout_width="@dimen/dimens_40"
+        android:layout_height="@dimen/dimens_40"
+        android:padding="@dimen/dimens_8"
         android:src="@drawable/ic_edit"
         android:background="?attr/selectableItemBackgroundBorderless"
         android:contentDescription="编辑"
@@ -97,8 +83,8 @@
     <!-- Legacy Hidden View for Backwards Compatibility -->
     <ImageView
         android:id="@+id/btn_more"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
+        android:layout_width="@dimen/dimens_0"
+        android:layout_height="@dimen/dimens_0"
         android:visibility="gone"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent" />

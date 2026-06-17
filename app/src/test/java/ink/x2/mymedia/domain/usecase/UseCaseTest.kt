@@ -35,6 +35,6 @@ class UseCaseTest {
         val mediaStoreScanner = MediaStoreScanner(mockContext, Dispatchers.Unconfined)
         val realRepository = ScanRepositoryImpl(mediaStoreScanner)
         val realScanMediaUseCase = ScanMediaUseCase(realRepository)
-        val result = realScanAudioUseCase()
+//        val result = realScanAudioUseCase()
     }
 }

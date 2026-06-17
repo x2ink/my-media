@@ -11,12 +11,15 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
+
 data class MediaItemUiState(
     val media: LocalMediaItem,
     val isSelected: Boolean = false
 )
+
 @HiltViewModel
 class ScanViewModel @Inject constructor(
     private val scanMediaUseCase: ScanMediaUseCase,
@@ -27,7 +30,8 @@ class ScanViewModel @Inject constructor(
 
     private val mediaType: MediaType =
         savedStateHandle.get<MediaType>("media_type") ?: MediaType.AUDIO
-    fun queryScanMediaResult(){
+
+    fun queryScanMediaResult() {
         viewModelScope.launch(Dispatchers.IO) {
             val result = scanMediaUseCase.queryScanMediaResult(mediaType)
             _mediaList.value = result.map {
@@ -37,6 +41,22 @@ class ScanViewModel @Inject constructor(
                 )
             }
         }
+    }
+
+    fun updateMediaList(mediaItem: MediaItemUiState) {
+        _mediaList.update { currentList ->
+            currentList.map { item ->
+                if (item.media.id == mediaItem.media.id) {
+                    mediaItem
+                } else {
+                    item
+                }
+            }
+        }
+    }
+    fun updateListSelect(mediaItem: MediaItemUiState,isChecked: Boolean){
+        val newMediaItem=mediaItem.copy(isSelected = isChecked)
+        updateMediaList(newMediaItem)
     }
 }
 

@@ -11,21 +11,21 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:padding="16dp">
+        android:padding="@dimen/dimens_16">
 
         <com.google.android.material.card.MaterialCardView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="16dp"
+            android:layout_marginBottom="@dimen/dimens_16"
             style="@style/Widget.Material3.CardView.Filled"
-            app:cardCornerRadius="12dp"
-            app:cardElevation="0dp">
+            app:cardCornerRadius="@dimen/dimens_12"
+            app:cardElevation="@dimen/dimens_0">
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
-                android:padding="16dp">
+                android:padding="@dimen/dimens_16">
 
                 <TextView
                     android:layout_width="wrap_content"
@@ -33,7 +33,7 @@
                     android:text="@string/continue_playing"
                     android:textAppearance="?attr/textAppearanceTitleMedium"
                     android:textStyle="bold"
-                    android:layout_marginBottom="12dp" />
+                    android:layout_marginBottom="@dimen/dimens_12" />
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -44,17 +44,17 @@
                     <!-- 封面占位 -->
                     <com.google.android.material.imageview.ShapeableImageView
                         android:id="@+id/iv_continue_cover"
-                        android:layout_width="48dp"
-                        android:layout_height="48dp"
+                        android:layout_width="@dimen/dimens_48"
+                        android:layout_height="@dimen/dimens_48"
                         android:background="?attr/colorSurfaceVariant"
                         android:scaleType="center"
                         android:src="@drawable/ic_play"
                         app:shapeAppearanceOverlay="@style/ShapeAppearance.Material3.Corner.Small"
-                        android:layout_marginEnd="12dp" />
+                        android:layout_marginEnd="@dimen/dimens_12" />
 
                     <!-- 文字描述 -->
                     <LinearLayout
-                        android:layout_width="0dp"
+                        android:layout_width="@dimen/dimens_0"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
                         android:orientation="vertical">
@@ -74,7 +74,7 @@
                             android:text="01:23 / 04:20"
                             android:textAppearance="?attr/textAppearanceBodyMedium"
                             android:textColor="?android:attr/textColorSecondary"
-                            android:layout_marginTop="2dp" />
+                            android:layout_marginTop="@dimen/dimens_2" />
                     </LinearLayout>
 
                     <!-- 播放按钮 -->
@@ -83,7 +83,7 @@
                         android:layout_height="wrap_content"
                         android:text="@string/play"
                         style="@style/Widget.Material3.Button.TonalButton"
-                        android:layout_marginStart="8dp" />
+                        android:layout_marginStart="@dimen/dimens_8" />
                 </LinearLayout>
 
             </LinearLayout>
@@ -94,26 +94,26 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
-            android:layout_marginBottom="16dp"
+            android:layout_marginBottom="@dimen/dimens_16"
             android:weightSum="2">
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/scan_audio"
-                android:layout_width="0dp"
+                android:layout_width="@dimen/dimens_0"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:text="@string/scan_media"
                 style="@style/Widget.Material3.Button"
-                android:layout_marginEnd="4dp" />
+                android:layout_marginEnd="@dimen/dimens_4" />
 
             <com.google.android.material.button.MaterialButton
-                android:layout_width="0dp"
+                android:layout_width="@dimen/dimens_0"
                 android:id="@+id/scan_video"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:text="@string/scan_video"
                 style="@style/Widget.Material3.Button"
-                android:layout_marginStart="4dp" />
+                android:layout_marginStart="@dimen/dimens_4" />
         </LinearLayout>
 
 
@@ -121,16 +121,16 @@
         <com.google.android.material.card.MaterialCardView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="16dp"
+            android:layout_marginBottom="@dimen/dimens_16"
             style="@style/Widget.Material3.CardView.Filled"
-            app:cardCornerRadius="12dp"
-            app:cardElevation="0dp">
+            app:cardCornerRadius="@dimen/dimens_12"
+            app:cardElevation="@dimen/dimens_0">
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
-                android:padding="16dp">
+                android:padding="@dimen/dimens_16">
 
                 <TextView
                     android:layout_width="wrap_content"
@@ -138,7 +138,7 @@
                     android:text="@string/library_statistics"
                     android:textAppearance="?attr/textAppearanceTitleMedium"
                     android:textStyle="bold"
-                    android:layout_marginBottom="12dp" />
+                    android:layout_marginBottom="@dimen/dimens_12" />
 
                 <!-- 音乐统计 -->
                 <LinearLayout
@@ -146,10 +146,10 @@
                     android:layout_height="wrap_content"
                     android:orientation="horizontal"
                     android:gravity="center_vertical"
-                    android:layout_marginBottom="8dp">
+                    android:layout_marginBottom="@dimen/dimens_8">
 
                     <TextView
-                        android:layout_width="0dp"
+                        android:layout_width="@dimen/dimens_0"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
                         android:text="音乐"
@@ -169,10 +169,10 @@
                     android:layout_height="wrap_content"
                     android:orientation="horizontal"
                     android:gravity="center_vertical"
-                    android:layout_marginBottom="8dp">
+                    android:layout_marginBottom="@dimen/dimens_8">
 
                     <TextView
-                        android:layout_width="0dp"
+                        android:layout_width="@dimen/dimens_0"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
                         android:text="视频"
@@ -194,7 +194,7 @@
                     android:gravity="center_vertical">
 
                     <TextView
-                        android:layout_width="0dp"
+                        android:layout_width="@dimen/dimens_0"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
                         android:text="@string/occupied_space"
@@ -218,7 +218,7 @@
             android:text="@string/recent_play"
             android:textAppearance="?attr/textAppearanceTitleMedium"
             android:textStyle="bold"
-            android:layout_marginBottom="8dp" />
+            android:layout_marginBottom="@dimen/dimens_8" />
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/rv_recent_play"

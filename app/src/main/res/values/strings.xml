@@ -17,4 +17,5 @@
     <string name="continue_playing">继续播放</string>
     <string name="library_statistics">媒体库统计</string>
     <string name="occupied_space">占用空间</string>
+    <string name="please_input_new_name">请输入新名称</string>
 </resources>

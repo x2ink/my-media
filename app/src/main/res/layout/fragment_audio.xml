@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:background="?android:attr/colorBackground"
-    android:padding="16dp">
+    android:padding="@dimen/dimens_16">
 
     <!-- 1. 搜索框 -->
     <com.google.android.material.textfield.TextInputLayout
@@ -16,8 +16,8 @@
         android:hint="搜索音乐"
         style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
         app:startIconDrawable="@drawable/ic_search"
-        app:cardCornerRadius="24dp"
-        android:layout_marginBottom="12dp">
+        app:cardCornerRadius="@dimen/dimens_24"
+        android:layout_marginBottom="@dimen/dimens_12">
 
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/et_search"
@@ -32,7 +32,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:scrollbars="none"
-        android:layout_marginBottom="16dp">
+        android:layout_marginBottom="@dimen/dimens_16">
 
         <com.google.android.material.chip.ChipGroup
             android:layout_width="wrap_content"
@@ -59,7 +59,7 @@
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rv_audio_list"
         android:layout_width="match_parent"
-        android:layout_height="0dp"
+        android:layout_height="@dimen/dimens_0"
         android:layout_weight="1"
         tools:listitem="@layout/item_media_linear" />
 
