@@ -11,7 +11,7 @@ import ink.x2.mymedia.domain.model.MediaType
 import ink.x2.mymedia.domain.usecase.ScanMediaUseCase
 import ink.x2.mymedia.feature.scan.ScanActivity
 import ink.x2.mymedia.playback.controller.PlaybackController
-import ink.x2.mymedia.playback.ui.PlaybackUiBinder
+import ink.x2.mymedia.playback.controller.PlaybackUiBinder
 import javax.inject.Inject
 @AndroidEntryPoint
 class HomeFragment: BaseFragment<FragmentHomeBinding>(R.layout.fragment_home) {

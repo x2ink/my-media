@@ -4,20 +4,12 @@ import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.view.View
-import android.widget.SeekBar
 import androidx.activity.viewModels
-import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.lifecycleScope
-import androidx.lifecycle.repeatOnLifecycle
-import com.orhanobut.logger.Logger
 import dagger.hilt.android.AndroidEntryPoint
-import ink.x2.mymedia.R
 import ink.x2.mymedia.core.base.BaseActivity
-import ink.x2.mymedia.core.ext.toDurationString
 import ink.x2.mymedia.databinding.ActivityPlayingBinding
 import ink.x2.mymedia.playback.controller.PlaybackController
-import ink.x2.mymedia.playback.ui.PlaybackUiBinder
-import kotlinx.coroutines.launch
+import ink.x2.mymedia.playback.controller.PlaybackUiBinder
 import javax.inject.Inject
 import kotlin.getValue
 @AndroidEntryPoint

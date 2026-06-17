@@ -13,14 +13,17 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:padding="@dimen/dimens_16">
+        android:paddingTop="@dimen/dimens_16"
+        android:paddingBottom="@dimen/dimens_16">
 
         <!-- Top Row: Cover, Title & Subtitle, Play/Pause Button on Right -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
-            android:gravity="center_vertical">
+            android:gravity="center_vertical"
+            android:layout_marginStart="@dimen/dimens_16"
+            android:layout_marginEnd="@dimen/dimens_16">
 
             <!-- Cover Artwork -->
             <com.google.android.material.imageview.ShapeableImageView
@@ -72,7 +75,6 @@
                 android:layout_marginStart="@dimen/dimens_8" />
         </LinearLayout>
 
-        <!-- Bottom Row: Progress Bar (LinearProgressIndicator) and Timers -->
         <!-- Bottom Row: Progress Bar (SeekBar) and Timers -->
         <LinearLayout
             android:layout_width="match_parent"
@@ -88,14 +90,14 @@
                 android:progress="0"
                 android:paddingStart="@dimen/dimens_16"
                 android:paddingEnd="@dimen/dimens_16"
-                android:layout_marginStart="-16dp"
-                android:layout_marginEnd="-16dp"
                 app:splitTrack="false" />
 
             <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/dimens_4">
+                android:layout_marginTop="@dimen/dimens_4"
+                android:layout_marginStart="@dimen/dimens_16"
+                android:layout_marginEnd="@dimen/dimens_16">
 
                 <TextView
                     android:id="@+id/tv_audio_time_current"

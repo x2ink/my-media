@@ -1,4 +1,4 @@
-package ink.x2.mymedia.playback.ui
+package ink.x2.mymedia.playback.controller
 
 import android.view.View
 import android.widget.SeekBar
@@ -10,7 +10,6 @@ import androidx.lifecycle.repeatOnLifecycle
 import com.google.android.material.button.MaterialButton
 import ink.x2.mymedia.R
 import ink.x2.mymedia.core.ext.toDurationString
-import ink.x2.mymedia.playback.controller.PlaybackController
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
