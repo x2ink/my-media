@@ -17,7 +17,6 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toBottomOf="parent" />
 
-    <!-- Thumbnail / Icon -->
     <com.google.android.material.imageview.ShapeableImageView
         android:id="@+id/iv_media_icon"
         android:layout_width="@dimen/dimens_48"
@@ -30,9 +29,8 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"
         android:layout_marginStart="@dimen/dimens_12" />
-
-    <!-- Details: Title & Subtitle -->
     <LinearLayout
+        android:id="@+id/ll_media_content"
         android:layout_width="@dimen/dimens_0"
         android:layout_height="wrap_content"
         android:orientation="vertical"

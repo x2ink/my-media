@@ -102,7 +102,7 @@
                 android:layout_width="@dimen/dimens_0"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="@string/scan_media"
+                android:text="@string/scan_audio"
                 style="@style/Widget.Material3.Button"
                 android:layout_marginEnd="@dimen/dimens_4" />
 

@@ -7,8 +7,7 @@
     <string name="video">视频</string>
     <string name="setting">设置</string>
     <string name="scan_video">扫描视频</string>
-    <string name="scan_media">扫描音乐</string>
-    <string name="scan_title">扫描媒体</string>
+    <string name="scan_audio">扫描音乐</string>
     <string name="scan_action">开始扫描</string>
     <string name="scan_results">扫描结果</string>
     <string name="no_results">暂无扫描结果</string>
@@ -18,4 +17,5 @@
     <string name="library_statistics">媒体库统计</string>
     <string name="occupied_space">占用空间</string>
     <string name="please_input_new_name">请输入新名称</string>
+    <string name="open_source_repository">@x2ink</string>
 </resources>

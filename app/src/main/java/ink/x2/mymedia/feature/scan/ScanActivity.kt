@@ -12,16 +12,13 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
-import com.google.android.material.textfield.TextInputEditText
-import com.google.android.material.textfield.TextInputLayout
-import com.orhanobut.logger.Logger
 import dagger.hilt.android.AndroidEntryPoint
 import ink.x2.mymedia.R
 import ink.x2.mymedia.core.base.BaseActivity
 import ink.x2.mymedia.databinding.ActivityScanBinding
 import ink.x2.mymedia.databinding.DialogEditScanResultBinding
 import ink.x2.mymedia.domain.model.MediaType
-import kotlinx.coroutines.Dispatchers
+import ink.x2.mymedia.feature.playing.PlayingActivity
 import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
@@ -47,7 +44,6 @@ class ScanActivity : BaseActivity<ActivityScanBinding>() {
         initListeners()
         initRecyclerView()
         observeViewModel()
-
     }
 
     @SuppressLint("InflateParams")
@@ -83,6 +79,8 @@ class ScanActivity : BaseActivity<ActivityScanBinding>() {
             showInputDialog(data)
         }, onSelectClick = { media, isSelected ->
             viewModel.updateListSelect(media, isSelected)
+        }, onClickItem = {media->
+            viewModel.openPlayingActivity(media)
         })
         binding.rvScanResults.layoutManager = LinearLayoutManager(this)
         binding.rvScanResults.addItemDecoration(
@@ -99,18 +97,29 @@ class ScanActivity : BaseActivity<ActivityScanBinding>() {
         binding.btnScan.setOnClickListener {
             viewModel.queryScanMediaResult()
         }
+        when(viewModel.getMediaType()){
+            MediaType.AUDIO->binding.toolbar.title=getString(R.string.scan_audio)
+            MediaType.VIDEO->binding.toolbar.title=getString(R.string.scan_video)
+        }
     }
 
     private fun observeViewModel() {
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
-                viewModel.mediaList.collect { list ->
-                    list.all {
-                        it.isSelected
-                    }.apply {
-                        binding.cbSelectAll.isChecked=this
+
+                launch {
+                    viewModel.mediaList.collect { list ->
+                        binding.cbSelectAll.isChecked =
+                            list.isNotEmpty() && list.all { it.isSelected }
+
+                        scanAdapter.submitList(list)
                     }
-                    scanAdapter.submitList(list)
+                }
+
+                launch {
+                    viewModel.openPlayingEvent.collect { media ->
+                        PlayingActivity.startFrom(this@ScanActivity)
+                    }
                 }
             }
         }

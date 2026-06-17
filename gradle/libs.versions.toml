@@ -18,7 +18,13 @@ fragmentKtx = "1.8.5"
 activityKtx = "1.9.3"
 constraintlayout = "2.2.1"
 room = "2.8.4"
+media3-exoplayer = "1.10.1"
 [libraries]
+androidx-media3-exoplayer = { group = "androidx.media3", name = "media3-exoplayer", version.ref = "media3-exoplayer" }
+androidx-media3-ui = { group = "androidx.media3", name = "media3-ui", version.ref = "media3-exoplayer" }
+androidx-media3-common = { group = "androidx.media3", name = "media3-common", version.ref = "media3-exoplayer" }
+androidx-media3-session = { group = "androidx.media3", name = "media3-session", version.ref = "media3-exoplayer" }
+
 androidx-room-runtime = { group = "androidx.room", name = "room-runtime", version.ref = "room" }
 androidx-room-ktx = { group = "androidx.room", name = "room-ktx", version.ref = "room" }
 androidx-room-compiler = { group = "androidx.room", name = "room-compiler", version.ref = "room" }

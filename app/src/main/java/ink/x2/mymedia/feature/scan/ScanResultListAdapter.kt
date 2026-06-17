@@ -17,6 +17,8 @@ import ink.x2.mymedia.domain.model.MediaType
 import androidx.core.net.toUri
 import com.orhanobut.logger.Logger
 import ink.x2.mymedia.R
+import ink.x2.mymedia.core.ext.toDurationString
+import ink.x2.mymedia.core.ext.toSizeString
 
 class VerticalGapDecoration(
     private val gap: Int,
@@ -37,6 +39,7 @@ class VerticalGapDecoration(
 }
 
 class ScanResultListAdapter(
+    private val onClickItem:(MediaItemUiState)-> Unit,
     private val onSelectClick:(MediaItemUiState, Boolean)-> Unit,
     private val onEditClick: (MediaItemUiState) -> Unit
 ) : ListAdapter<MediaItemUiState, ScanResultListAdapter.ViewHolder>(DiffCallback) {
@@ -50,34 +53,6 @@ class ScanResultListAdapter(
         return ViewHolder(binding)
     }
 
-    @SuppressLint("DefaultLocale")
-    private fun Long.toSizeString(): String {
-        if (this <= 0L) return "0 B"
-        val kb = 1024.0
-        val mb = kb * 1024
-        val gb = mb * 1024
-        return when {
-            this >= gb -> String.format("%.2f GB", this / gb)
-            this >= mb -> String.format("%.2f MB", this / mb)
-            this >= kb -> String.format("%.2f KB", this / kb)
-            else -> "$this B"
-        }
-    }
-
-    private fun Long.toDurationString(): String {
-        if (this <= 0L) return "00:00"
-
-        val totalSeconds = this / 1000
-        val hours = totalSeconds / 3600
-        val minutes = (totalSeconds % 3600) / 60
-        val seconds = totalSeconds % 60
-
-        return if (hours > 0) {
-            "%d:%02d:%02d".format(hours, minutes, seconds)
-        } else {
-            "%02d:%02d".format(minutes, seconds)
-        }
-    }
 
     fun getIcon(media: LocalMediaItem): Uri {
         return when (media.mediaType) {
@@ -126,7 +101,19 @@ class ScanResultListAdapter(
                 onEditClick(getItem(adapterPosition))
             }
             cbSelect.setOnClickListener {
-                onSelectClick(item, cbSelect.isChecked)
+                val adapterPosition = holder.bindingAdapterPosition
+                if (adapterPosition == RecyclerView.NO_POSITION) return@setOnClickListener
+                onSelectClick(getItem(adapterPosition), cbSelect.isChecked)
+            }
+            ivMediaIcon.setOnClickListener {
+                val adapterPosition = holder.bindingAdapterPosition
+                if (adapterPosition == RecyclerView.NO_POSITION) return@setOnClickListener
+                onClickItem(getItem(adapterPosition))
+            }
+            llMediaContent.setOnClickListener {
+                val adapterPosition = holder.bindingAdapterPosition
+                if (adapterPosition == RecyclerView.NO_POSITION) return@setOnClickListener
+                onClickItem(getItem(adapterPosition))
             }
         }
     }

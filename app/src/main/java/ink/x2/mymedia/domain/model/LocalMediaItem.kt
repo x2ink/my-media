@@ -1,11 +1,9 @@
 package ink.x2.mymedia.domain.model
 
-import android.net.Uri
-
 data class LocalMediaItem(
     val id: Long,
     val title: String,
-    val uri: Uri,
+    val uriString: String,
     val artist: String?,
     val duration: Long,
     val size: Long,
@@ -27,7 +25,7 @@ data class LocalMediaItem(
         if (dateAdded != other.dateAdded) return false
         if (albumId != other.albumId) return false
         if (title != other.title) return false
-        if (uri != other.uri) return false
+        if (uriString != other.uriString) return false
         if (artist != other.artist) return false
         if (mimeType != other.mimeType) return false
         if (mediaType != other.mediaType) return false
@@ -43,7 +41,7 @@ data class LocalMediaItem(
         result = 31 * result + dateAdded.hashCode()
         result = 31 * result + albumId.hashCode()
         result = 31 * result + title.hashCode()
-        result = 31 * result + uri.hashCode()
+        result = 31 * result + uriString.hashCode()
         result = 31 * result + (artist?.hashCode() ?: 0)
         result = 31 * result + (mimeType?.hashCode() ?: 0)
         result = 31 * result + mediaType.hashCode()

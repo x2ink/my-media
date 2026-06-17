@@ -232,5 +232,33 @@
             </LinearLayout>
         </com.google.android.material.card.MaterialCardView>
 
+        <!-- GitHub Repository Footer -->
+        <LinearLayout
+            android:id="@+id/ll_github"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:gravity="center"
+            android:layout_marginTop="@dimen/dimens_24"
+            android:layout_marginBottom="@dimen/dimens_16"
+            android:background="?attr/selectableItemBackground"
+            android:padding="@dimen/dimens_8">
+
+            <ImageView
+                android:layout_width="@dimen/dimens_28"
+                android:layout_height="@dimen/dimens_28"
+                android:src="@drawable/ic_github"
+                app:tint="?attr/colorOnSurfaceVariant"
+                android:contentDescription="GitHub" />
+
+            <TextView
+                android:layout_marginTop="@dimen/dimens_8"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/open_source_repository"
+                android:textAppearance="?attr/textAppearanceBodyMedium"
+                android:textColor="?attr/colorOnSurfaceVariant" />
+        </LinearLayout>
+
     </LinearLayout>
 </androidx.core.widget.NestedScrollView>

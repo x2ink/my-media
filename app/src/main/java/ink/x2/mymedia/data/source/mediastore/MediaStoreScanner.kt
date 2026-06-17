@@ -118,7 +118,7 @@ class MediaStoreScanner @Inject constructor(
 
                 val item = LocalMediaItem(
                     id = id,
-                    uri = uri,
+                    uriString = uri.toString(),
                     title = cursor.getString(titleColumn) ?: "未知媒体",
                     artist = if (artistColumn != -1) {
                         cursor.getString(artistColumn)
