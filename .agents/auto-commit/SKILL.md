@@ -33,6 +33,10 @@ Analyze the staged changes and draft a commit message following the **Convention
 [optional footer(s)]
 ```
 
+### Staging-Area Alignment Constraint
+*   **No Chat/Context Bias**: Do NOT base the commit message on conversational history, debugging discussions, or background chat context (e.g., do not mention fixing specific crashes or bugs like "ANR", "NPE", "NullPointerException", or "memory leaks" unless they are explicitly and directly visible in the code changes being committed).
+*   **Staging Area Only**: The commit message must describe *only* the physical code modifications present in the staged diff (`git diff --cached`). Do not speculate on intention beyond what is code-evident.
+
 ### Type Guidelines
 Choose the appropriate type:
 *   `feat`: A new feature or capability.

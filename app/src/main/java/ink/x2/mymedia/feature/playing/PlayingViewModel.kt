@@ -18,23 +18,5 @@ class PlayingViewModel @Inject constructor(
 ): ViewModel(
 
 ) {
-    private val _currentPosition = MutableStateFlow(0L)
-    val currentPosition = _currentPosition.asStateFlow()
-    private val _duration = MutableStateFlow(0L)
-    val duration = _duration.asStateFlow()
-    private var dragProgressFlag = false
-    init {
-        viewModelScope.launch {
-            while (isActive){
-                if(!dragProgressFlag){
-                    _currentPosition.value=playbackController.getCurrentPosition()
-                    _duration.value=playbackController.getDuration()
-                }
-                delay(500.milliseconds)
-            }
-        }
-    }
-    fun setDragProgressFlag(flag: Boolean){
-        dragProgressFlag=flag
-    }
+
 }

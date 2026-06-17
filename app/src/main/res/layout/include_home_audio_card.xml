@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/card_audio_play"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginBottom="@dimen/dimens_16"
+    style="@style/Widget.Material3.CardView.Filled"
+    app:cardCornerRadius="@dimen/dimens_12"
+    app:cardElevation="@dimen/dimens_0">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="@dimen/dimens_16">
+
+        <!-- Top Row: Cover, Title & Subtitle, Play/Pause Button on Right -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical">
+
+            <!-- Cover Artwork -->
+            <com.google.android.material.imageview.ShapeableImageView
+                android:id="@+id/iv_audio_cover"
+                android:layout_width="@dimen/dimens_48"
+                android:layout_height="@dimen/dimens_48"
+                android:background="?attr/colorSurfaceVariant"
+                android:scaleType="centerCrop"
+                android:src="@drawable/ic_music"
+                app:shapeAppearanceOverlay="@style/ShapeAppearance.Material3.Corner.Small"
+                android:layout_marginEnd="@dimen/dimens_12" />
+
+            <!-- Song Info -->
+            <LinearLayout
+                android:layout_width="@dimen/dimens_0"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/tv_audio_title"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="暂无播放音乐"
+                    android:textAppearance="?attr/textAppearanceBodyLarge"
+                    android:textStyle="bold"
+                    android:ellipsize="end"
+                    android:singleLine="true" />
+
+                <TextView
+                    android:id="@+id/tv_audio_artist"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="继续播放上次播放的歌曲"
+                    android:textAppearance="?attr/textAppearanceBodyMedium"
+                    android:textColor="?android:attr/textColorSecondary"
+                    android:layout_marginTop="@dimen/dimens_2" />
+            </LinearLayout>
+
+            <!-- Play/Pause Icon Button on Far Right -->
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btn_audio_play_pause"
+                android:layout_width="@dimen/dimens_48"
+                android:layout_height="@dimen/dimens_48"
+                style="@style/Widget.Material3.Button.IconButton"
+                app:icon="@drawable/ic_play"
+                app:iconSize="@dimen/dimens_24"
+                app:iconTint="?attr/colorOnSurface"
+                android:layout_marginStart="@dimen/dimens_8" />
+        </LinearLayout>
+
+        <!-- Bottom Row: Progress Bar (LinearProgressIndicator) and Timers -->
+        <!-- Bottom Row: Progress Bar (SeekBar) and Timers -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_marginTop="@dimen/dimens_12">
+
+            <SeekBar
+                android:id="@+id/seek_bar_audio"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:max="100"
+                android:progress="0"
+                android:paddingStart="@dimen/dimens_16"
+                android:paddingEnd="@dimen/dimens_16"
+                android:layout_marginStart="-16dp"
+                android:layout_marginEnd="-16dp"
+                app:splitTrack="false" />
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/dimens_4">
+
+                <TextView
+                    android:id="@+id/tv_audio_time_current"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="00:00"
+                    android:textAppearance="?attr/textAppearanceLabelSmall"
+                    android:textColor="?android:attr/textColorSecondary"
+                    android:layout_alignParentStart="true" />
+
+                <TextView
+                    android:id="@+id/tv_audio_time_total"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="00:00"
+                    android:textAppearance="?attr/textAppearanceLabelSmall"
+                    android:textColor="?android:attr/textColorSecondary"
+                    android:layout_alignParentEnd="true" />
+            </RelativeLayout>
+        </LinearLayout>
+
+    </LinearLayout>
+</com.google.android.material.card.MaterialCardView>

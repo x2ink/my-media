@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/card_video_play"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginBottom="@dimen/dimens_16"
+    style="@style/Widget.Material3.CardView.Filled"
+    app:cardCornerRadius="@dimen/dimens_12"
+    app:cardElevation="@dimen/dimens_0">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="@dimen/dimens_16">
+
+        <!-- Top Header for Card -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="上次播放的视频"
+            android:textAppearance="?attr/textAppearanceTitleMedium"
+            android:textStyle="bold"
+            android:layout_marginBottom="@dimen/dimens_12" />
+
+        <!-- Layout details: Thumbnail, Info, Fullscreen Button -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical">
+
+            <!-- Video Aspect 16:9 Thumbnail -->
+            <FrameLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="@dimen/dimens_12">
+
+                <com.google.android.material.imageview.ShapeableImageView
+                    android:id="@+id/iv_video_cover"
+                    android:layout_width="@dimen/dimens_96"
+                    android:layout_height="@dimen/dimens_54"
+                    android:background="?attr/colorSurfaceVariant"
+                    android:scaleType="centerCrop"
+                    android:src="@drawable/ic_play"
+                    app:shapeAppearanceOverlay="@style/ShapeAppearance.Material3.Corner.Small" />
+
+                <!-- Play Overlay icon centered -->
+                <ImageView
+                    android:layout_width="@dimen/dimens_24"
+                    android:layout_height="@dimen/dimens_24"
+                    android:layout_gravity="center"
+                    android:src="@drawable/ic_play"
+                    app:tint="?attr/colorOnSurface"
+                    android:alpha="0.8" />
+            </FrameLayout>
+
+            <!-- Video File Details -->
+            <LinearLayout
+                android:layout_width="@dimen/dimens_0"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/tv_video_title"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="暂无播放视频"
+                    android:textAppearance="?attr/textAppearanceBodyLarge"
+                    android:textStyle="bold"
+                    android:ellipsize="end"
+                    android:singleLine="true" />
+
+                <TextView
+                    android:id="@+id/tv_video_progress"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="继续播放上次播放的视频"
+                    android:textAppearance="?attr/textAppearanceBodyMedium"
+                    android:textColor="?android:attr/textColorSecondary"
+                    android:layout_marginTop="@dimen/dimens_2" />
+            </LinearLayout>
+
+            <!-- Fullscreen Tonal Button -->
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btn_video_fullscreen"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="全屏"
+                style="@style/Widget.Material3.Button.TonalButton"
+                android:layout_marginStart="@dimen/dimens_8" />
+        </LinearLayout>
+
+    </LinearLayout>
+</com.google.android.material.card.MaterialCardView>

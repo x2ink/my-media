@@ -10,12 +10,16 @@ import ink.x2.mymedia.databinding.FragmentHomeBinding
 import ink.x2.mymedia.domain.model.MediaType
 import ink.x2.mymedia.domain.usecase.ScanMediaUseCase
 import ink.x2.mymedia.feature.scan.ScanActivity
+import ink.x2.mymedia.playback.controller.PlaybackController
+import ink.x2.mymedia.playback.ui.PlaybackUiBinder
 import javax.inject.Inject
 @AndroidEntryPoint
 class HomeFragment: BaseFragment<FragmentHomeBinding>(R.layout.fragment_home) {
     companion object{
         const val TITLE : String = "首页"
     }
+    @Inject
+    lateinit var playbackController: PlaybackController
     @Inject
     lateinit var scanMediaUseCase: ScanMediaUseCase
     private val viewModel: HomeViewModel by viewModels()
@@ -26,6 +30,16 @@ class HomeFragment: BaseFragment<FragmentHomeBinding>(R.layout.fragment_home) {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         initListener()
+        PlaybackUiBinder(viewLifecycleOwner, playbackController)
+            .bind(
+                cardView = binding.includeAudioCard.cardAudioPlay,
+                titleView = binding.includeAudioCard.tvAudioTitle,
+                artistView = binding.includeAudioCard.tvAudioArtist,
+                playPauseBtn = binding.includeAudioCard.btnAudioPlayPause,
+                seekBar = binding.includeAudioCard.seekBarAudio,
+                currentTimeTv = binding.includeAudioCard.tvAudioTimeCurrent,
+                totalTimeTv = binding.includeAudioCard.tvAudioTimeTotal
+            )
     }
     fun initListener(){
         binding.scanAudio.setOnClickListener {

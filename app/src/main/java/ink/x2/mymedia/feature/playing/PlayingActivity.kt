@@ -16,6 +16,7 @@ import ink.x2.mymedia.core.base.BaseActivity
 import ink.x2.mymedia.core.ext.toDurationString
 import ink.x2.mymedia.databinding.ActivityPlayingBinding
 import ink.x2.mymedia.playback.controller.PlaybackController
+import ink.x2.mymedia.playback.ui.PlaybackUiBinder
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 import kotlin.getValue
@@ -37,17 +38,18 @@ class PlayingActivity  : BaseActivity<ActivityPlayingBinding>(){
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
-        observeViewModel()
         initListeners()
+        PlaybackUiBinder(this, playbackController)
+            .bind(
+                titleView = binding.tvTitle,
+                artistView = binding.tvArtist,
+                playPauseBtn = binding.btnPlay,
+                seekBar = binding.seekBar,
+                currentTimeTv = binding.tvCurrentTime,
+                totalTimeTv = binding.tvTotalTime
+            )
     }
     fun initListeners(){
-        binding.btnPlay.setOnClickListener {
-            if (playbackController.isPlaying.value) {
-                playbackController.pause()
-            } else {
-                playbackController.play()
-            }
-        }
         binding.btnNext.apply {
             isEnabled =playbackController.hasNext()
             alpha = if (playbackController.hasNext()) 1.0f else 0.3f
@@ -62,68 +64,8 @@ class PlayingActivity  : BaseActivity<ActivityPlayingBinding>(){
                 playbackController.skipToPrevious()
             }
         }
-        binding.seekBar.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener{
-            override fun onProgressChanged(
-                p0: SeekBar?,
-                p1: Int,
-                p2: Boolean
-            ) {
-                if (p2) {
-                    binding.tvCurrentTime.text = p1.toLong().toDurationString()
-                }
-            }
-
-            override fun onStartTrackingTouch(p0: SeekBar?) {
-                viewModel.setDragProgressFlag(true)
-            }
-
-            override fun onStopTrackingTouch(p0: SeekBar?) {
-                p0?.let { seekBar ->
-                    playbackController.seekTo(seekBar.progress.toLong())
-                }
-                viewModel.setDragProgressFlag(false)
-            }
-
-        })
         binding.toolbar.setNavigationOnClickListener {
             finish()
-        }
-    }
-    fun observeViewModel(){
-        lifecycleScope.launch {
-            repeatOnLifecycle(Lifecycle.State.STARTED) {
-                launch {
-                    playbackController.currentMediaItem.collect { mediaItem ->
-                        Logger.d(mediaItem?.mediaMetadata.toString())
-                        binding.tvTitle.text= mediaItem?.mediaMetadata?.title?:"未知音频"
-                        binding.tvArtist.text= mediaItem?.mediaMetadata?.artist?:"未知作者"
-                        Logger.i(mediaItem?.mediaMetadata?.durationMs.toString())
-                        binding.tvTotalTime.text= mediaItem?.mediaMetadata?.durationMs?.toDurationString()
-                    }
-                }
-                launch {
-                    playbackController.isPlaying.collect { isPlaying ->
-                        binding.btnPlay.setIconResource(
-                            if (isPlaying) {
-                                R.drawable.ic_pause
-                            } else {
-                                R.drawable.ic_play
-                            }
-                        )
-                    }
-                }
-                launch {
-                    viewModel.currentPosition.collect { position->
-                        binding.seekBar.progress=position.toInt()
-                        binding.tvCurrentTime.text=position.toDurationString()
-                    }
-                }
-                launch {
-                    viewModel.duration.collect { duration->
-                        binding.seekBar.max=duration.toInt()
-                    }
-                }
-            }
         }
     }
 }
