@@ -22,6 +22,7 @@ import com.permissionx.guolindev.PermissionX
 import dagger.hilt.android.AndroidEntryPoint
 import ink.x2.mymedia.R
 import ink.x2.mymedia.core.base.BaseActivity
+import ink.x2.mymedia.core.ui.VerticalGapDecoration
 import ink.x2.mymedia.databinding.ActivityScanBinding
 import ink.x2.mymedia.databinding.DialogEditScanResultBinding
 import ink.x2.mymedia.databinding.DialogImportProgressBinding

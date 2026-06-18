@@ -11,4 +11,7 @@ interface MediaDao {
     fun insertAll(medias: List<MediaEntity>)
     @Query("SELECT EXISTS(SELECT 1 FROM media WHERE hash = :hash LIMIT 1)")
     fun exitsByHash(hash: String) : Boolean
+
+    @Query("SELECT * FROM media WHERE type = :type ORDER BY imported_at DESC")
+    fun getMediaByTypeFlow(type: String): kotlinx.coroutines.flow.Flow<List<MediaEntity>>
 }

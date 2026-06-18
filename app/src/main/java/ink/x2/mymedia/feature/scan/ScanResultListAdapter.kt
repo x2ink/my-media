@@ -21,23 +21,7 @@ import ink.x2.mymedia.core.ext.toDurationString
 import ink.x2.mymedia.core.ext.toSizeString
 import ink.x2.mymedia.databinding.ItemMediaGridBinding
 
-class VerticalGapDecoration(
-    private val gap: Int,
-) : RecyclerView.ItemDecoration() {
 
-    override fun getItemOffsets(
-        outRect: Rect,
-        view: View,
-        parent: RecyclerView,
-        state: RecyclerView.State
-    ) {
-        val position = parent.getChildAdapterPosition(view)
-        if (position == RecyclerView.NO_POSITION) return
-        if (position != 0) {
-            outRect.top = gap
-        }
-    }
-}
 
 class ScanResultListAdapter(
     private val onClickItem:(MediaItemUiState)-> Unit,
