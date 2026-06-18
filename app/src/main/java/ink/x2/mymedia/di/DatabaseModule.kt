@@ -20,7 +20,7 @@ object DatabaseModule {
         return Room.databaseBuilder(
             context, AppDatabase::class.java,
             "mymedia_db"
-        ).build()
+        ).fallbackToDestructiveMigration().build()
     }
     @Provides
     @Singleton

@@ -5,7 +5,7 @@ import androidx.room.RoomDatabase
 import ink.x2.mymedia.data.local.db.dao.MediaDao
 import ink.x2.mymedia.data.local.db.entity.MediaEntity
 
-@Database(entities = [MediaEntity::class], version = 1)
+@Database(entities = [MediaEntity::class], version = 2)
 abstract class AppDatabase : RoomDatabase() {
     abstract fun mediaDao(): MediaDao
 }

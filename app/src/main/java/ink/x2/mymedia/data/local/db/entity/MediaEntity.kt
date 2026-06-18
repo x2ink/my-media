@@ -2,9 +2,15 @@ package ink.x2.mymedia.data.local.db.entity
 
 import androidx.room.ColumnInfo
 import androidx.room.Entity
+import androidx.room.Index
 import androidx.room.PrimaryKey
 
-@Entity(tableName = "media")
+@Entity(
+    tableName = "media",
+    indices = [
+        Index(value = ["hash"], unique = true)
+    ]
+)
 data class MediaEntity(
     @PrimaryKey(autoGenerate = true)
     val id: Long = 0,
@@ -24,8 +30,8 @@ data class MediaEntity(
     val localRelativePath: String,// 导入后的相对存储路径（如 media/audio/xxx.mp3）
     @ColumnInfo(name = "source_uri")
     val sourceUri: String, // 原始源 URI 字符串
-    @ColumnInfo(name = "cover_relative_path")
-    val coverRelativePath: String?, // 专辑封面相对路径，可空
+    @ColumnInfo(name = "hash")
+    val hash: String,
     @ColumnInfo(name = "imported_at")
     val importedAt: Long = System.currentTimeMillis(),
     @ColumnInfo(name = "last_played_at")

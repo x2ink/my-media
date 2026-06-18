@@ -1,6 +1,5 @@
 package ink.x2.mymedia.feature.scan
 
-import android.widget.Toast
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -11,8 +10,8 @@ import ink.x2.mymedia.core.common.onError
 import ink.x2.mymedia.core.common.onSuccess
 import ink.x2.mymedia.domain.model.LocalMediaItem
 import ink.x2.mymedia.domain.model.MediaType
+import ink.x2.mymedia.domain.model.ImportProgress
 import ink.x2.mymedia.domain.usecase.ScanMediaUseCase
-import ink.x2.mymedia.feature.playing.PlayingActivity
 import ink.x2.mymedia.playback.controller.PlaybackController
 import ink.x2.mymedia.playback.mapper.toMediaItem
 import kotlinx.coroutines.Dispatchers
@@ -23,9 +22,14 @@ import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
+
+sealed interface ScanStatus{
+    data object Idel: ScanStatus
+    data object Start: ScanStatus
+    data object End: ScanStatus
+}
 data class MediaItemUiState(
     val media: LocalMediaItem,
     val isSelected: Boolean = false
@@ -49,17 +53,32 @@ class ScanViewModel @Inject constructor(
 ) : ViewModel() {
     private val _mediaList = MutableStateFlow<List<MediaItemUiState>>(emptyList())
     val mediaList: StateFlow<List<MediaItemUiState>> = _mediaList.asStateFlow()
+    private val _scanStatue = MutableStateFlow<ScanStatus>(ScanStatus.Idel)
+    val scanStatue: StateFlow<ScanStatus> = _scanStatue.asStateFlow()
+    private val _importProgress = MutableStateFlow<ImportProgress?>(null)
+    val importProgress: StateFlow<ImportProgress?> = _importProgress.asStateFlow()
+
     private val _uiEvent = MutableSharedFlow<ScanUiEvent>(
         extraBufferCapacity = 1
     )
     val uiEvent = _uiEvent.asSharedFlow()
+    
+    fun updateScanStatus(status: ScanStatus){
+        _scanStatue.value=status
+    }
+    
+    fun resetImportProgress() {
+        _importProgress.value = null
+    }
 
     private val mediaType: MediaType =
         savedStateHandle.get<MediaType>("media_type") ?: MediaType.AUDIO
     fun getMediaType(): MediaType{
         return mediaType
     }
+    
     fun queryScanMediaResult() {
+        updateScanStatus(ScanStatus.Start)
         viewModelScope.launch(Dispatchers.IO) {
            scanMediaUseCase.queryScanMediaResult(mediaType).onSuccess { scanMediaList->
                 _mediaList.value = scanMediaList.map {
@@ -68,7 +87,9 @@ class ScanViewModel @Inject constructor(
                         media = it
                     )
                 }
+                updateScanStatus(ScanStatus.End)
             }.onError { error ->
+                updateScanStatus(ScanStatus.End)
                 when(error){
                     AppError.SecurityException->{
                         _uiEvent.emit(ScanUiEvent.RequestMediaPermission)
@@ -82,6 +103,32 @@ class ScanViewModel @Inject constructor(
         }
     }
 
+    fun importSelectedMedia() {
+        val selectedItems = _mediaList.value
+            .filter { it.isSelected }
+            .map { it.media }
+
+        if (selectedItems.isEmpty()) {
+            viewModelScope.launch {
+                _uiEvent.emit(ScanUiEvent.ShowMessage(R.string.please_input_new_name))
+            }
+            return
+        }
+
+        viewModelScope.launch {
+            scanMediaUseCase.importSelectdMedia(selectedItems)
+                .collect { result ->
+                    result.onSuccess { progress ->
+                        _importProgress.value = progress
+                    }.onError {
+                        _importProgress.value = ImportProgress.Failure
+                    }
+                }
+        }
+    }
+    fun clearList(){
+        _mediaList.value=mutableListOf()
+    }
     fun updateMediaList(mediaItem: MediaItemUiState) {
         _mediaList.update { currentList ->
             currentList.map { item ->

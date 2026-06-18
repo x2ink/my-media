@@ -37,31 +37,52 @@
             android:gravity="center_horizontal">
 
             <!-- Circular Scan Button -->
-            <com.google.android.material.button.MaterialButton
+            <!-- 圆形扫描按钮容器 -->
+            <com.google.android.material.card.MaterialCardView
                 android:id="@+id/btn_scan"
                 android:layout_width="@dimen/dimens_140"
                 android:layout_height="@dimen/dimens_140"
-                android:text="@string/scan_action"
-                app:iconPadding="@dimen/dimens_0"
-                android:insetTop="@dimen/dimens_0"
-                android:insetBottom="@dimen/dimens_0"
-                app:cornerRadius="@dimen/dimens_70"
-                style="@style/Widget.Material3.Button"
-                android:backgroundTint="?attr/colorPrimary"
-                android:textColor="?attr/colorOnPrimary"
-                app:icon="@drawable/ic_search"
-                app:iconSize="@dimen/dimens_48"
-                app:iconGravity="top"
-                app:iconTint="?attr/colorOnPrimary"
-                android:paddingTop="@dimen/dimens_36"
-                android:paddingBottom="@dimen/dimens_36"
-                android:textAppearance="?attr/textAppearanceTitleMedium"
                 android:layout_gravity="center_horizontal"
                 android:layout_marginTop="@dimen/dimens_32"
-                android:layout_marginBottom="@dimen/dimens_32" />
+                android:layout_marginBottom="@dimen/dimens_32"
+                android:translationY="@dimen/dimens_64"
+                app:cardCornerRadius="@dimen/dimens_70"
+                app:cardBackgroundColor="?attr/colorPrimary"
+                app:cardElevation="@dimen/dimens_0"
+                app:strokeWidth="@dimen/dimens_0"
+                android:clickable="true"
+                android:focusable="true"
+                android:foreground="?attr/selectableItemBackgroundBorderless">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="vertical"
+                    android:gravity="center"
+                    android:padding="@dimen/dimens_16">
+
+                    <ImageView
+                        android:id="@+id/iv_scan_icon"
+                        android:layout_width="@dimen/dimens_48"
+                        android:layout_height="@dimen/dimens_48"
+                        android:src="@drawable/ic_search"
+                        app:tint="?attr/colorOnPrimary" />
+
+                    <!-- 扫描文字 -->
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/dimens_8"
+                        android:text="@string/scan_action"
+                        android:textColor="?attr/colorOnPrimary"
+                        android:textAppearance="?attr/textAppearanceTitleMedium"
+                        android:textStyle="bold" />
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
 
             <!-- Scan Results Header -->
             <TextView
+                android:alpha="0"
                 android:id="@+id/tv_results_title"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -72,6 +93,7 @@
 
             <!-- Empty State -->
             <TextView
+                tools:visibility="visible"
                 android:id="@+id/tv_empty"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -84,6 +106,7 @@
 
             <!-- RecyclerView for Scan Results -->
             <androidx.recyclerview.widget.RecyclerView
+                android:alpha="0"
                 android:id="@+id/rv_scan_results"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -95,6 +118,7 @@
 
     <!-- Bottom Control Bar for Bulk Operations -->
     <com.google.android.material.card.MaterialCardView
+        android:alpha="0"
         android:id="@+id/bottom_bar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

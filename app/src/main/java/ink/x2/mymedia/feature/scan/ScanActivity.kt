@@ -2,7 +2,7 @@ package ink.x2.mymedia.feature.scan
 
 import android.Manifest
 import android.annotation.SuppressLint
-import android.app.AlertDialog
+import androidx.appcompat.app.AlertDialog
 import android.content.Context
 import android.content.Intent
 import android.os.Build
@@ -23,6 +23,8 @@ import ink.x2.mymedia.R
 import ink.x2.mymedia.core.base.BaseActivity
 import ink.x2.mymedia.databinding.ActivityScanBinding
 import ink.x2.mymedia.databinding.DialogEditScanResultBinding
+import ink.x2.mymedia.databinding.DialogImportProgressBinding
+import ink.x2.mymedia.domain.model.ImportProgress
 import ink.x2.mymedia.domain.model.MediaType
 import ink.x2.mymedia.feature.playing.PlayingActivity
 import kotlinx.coroutines.launch
@@ -34,6 +36,9 @@ class ScanActivity : BaseActivity<ActivityScanBinding>() {
     }
     private val viewModel: ScanViewModel by viewModels()
     private lateinit var scanAdapter: ScanResultListAdapter
+    private var scanRotationAnimator: android.animation.ObjectAnimator? = null
+    private var progressDialog: AlertDialog? = null
+    private var progressDialogBinding: DialogImportProgressBinding? = null
 
     companion object {
         fun startFrom(activity: Context, mediaType: MediaType) {
@@ -44,6 +49,7 @@ class ScanActivity : BaseActivity<ActivityScanBinding>() {
     }
 
     override fun getInsetAppBar(): View = binding.appBar
+    @RequiresApi(Build.VERSION_CODES.TIRAMISU)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
@@ -51,7 +57,6 @@ class ScanActivity : BaseActivity<ActivityScanBinding>() {
         initRecyclerView()
         observeViewModel()
     }
-
     @SuppressLint("InflateParams")
     private fun showInputDialog(mediaItem: MediaItemUiState) {
         val dialogBinding = DialogEditScanResultBinding.inflate(layoutInflater)
@@ -102,6 +107,7 @@ class ScanActivity : BaseActivity<ActivityScanBinding>() {
 
     fun initListeners() {
         binding.btnScan.setOnClickListener {
+            viewModel.clearList()
             viewModel.queryScanMediaResult()
         }
         when(viewModel.getMediaType()){
@@ -114,8 +120,39 @@ class ScanActivity : BaseActivity<ActivityScanBinding>() {
         binding.cbSelectAll.setOnCheckedChangeListener { button, bool ->
             viewModel.updateListSelectAll(bool)
         }
+        binding.btnImport.setOnClickListener {
+            viewModel.importSelectedMedia()
+        }
     }
+    fun startScanAni(){
+        scanRotationAnimator = android.animation.ObjectAnimator.ofFloat(binding.ivScanIcon, "rotation", 0f, 360f).apply {
+            duration = 1000
+            repeatCount = android.animation.ValueAnimator.INFINITE
+            interpolator = android.view.animation.LinearInterpolator()
+            start()
+        }
 
+        binding.btnScan.animate().translationY(resources.getDimension(R.dimen.dimens_64)).setDuration(300).start()
+        binding.tvResultsTitle.animate().alpha(0f).setDuration(300).start()
+        binding.tvEmpty.animate().alpha(0f).setDuration(300).start()
+        binding.rvScanResults.animate().alpha(0f).setDuration(300).start()
+        binding.bottomBar.animate().alpha(0f).setDuration(300).start()
+    }
+    fun endScanAni(){
+        scanRotationAnimator?.cancel()
+        scanRotationAnimator = null
+        binding.ivScanIcon.rotation = 0f
+
+        binding.btnScan.animate().translationY(0f).setDuration(300).start()
+        binding.tvResultsTitle.animate().alpha(1f).setDuration(300).start()
+        
+        val listIsEmpty = viewModel.mediaList.value.isEmpty()
+        binding.tvEmpty.visibility = if (listIsEmpty) View.VISIBLE else View.GONE
+        binding.tvEmpty.animate().alpha(if (listIsEmpty) 1f else 0f).setDuration(300).start()
+        
+        binding.rvScanResults.animate().alpha(1f).setDuration(300).start()
+        binding.bottomBar.animate().alpha(1f).setDuration(300).start()
+    }
     @RequiresApi(Build.VERSION_CODES.TIRAMISU)
     private fun observeViewModel() {
         lifecycleScope.launch {
@@ -125,11 +162,31 @@ class ScanActivity : BaseActivity<ActivityScanBinding>() {
                     viewModel.mediaList.collect { list ->
                         binding.cbSelectAll.isChecked =
                             list.isNotEmpty() && list.all { it.isSelected }
-
                         scanAdapter.submitList(list)
                     }
                 }
+                launch {
+                    viewModel.scanStatue.collect {
+                        when(it){
+                            ScanStatus.Idel->{
 
+                            }
+
+                            ScanStatus.Start->{
+                                startScanAni()
+                            }
+
+                            ScanStatus.End->{
+                                endScanAni()
+                            }
+                        }
+                    }
+                }
+                launch {
+                    viewModel.importProgress.collect { progress ->
+                        updateImportProgress(progress)
+                    }
+                }
                 launch {
                     viewModel.uiEvent.collect { event->
                         when(event){
@@ -160,5 +217,60 @@ class ScanActivity : BaseActivity<ActivityScanBinding>() {
                 }
             }
         }
+    }
+
+    @SuppressLint("SetTextI18n")
+    private fun updateImportProgress(progress: ImportProgress?) {
+        if (progress == null) {
+            dismissProgressDialog()
+            return
+        }
+
+        when (progress) {
+            is ImportProgress.Loading -> {
+                if (progressDialog == null) {
+                    val dialogBinding = DialogImportProgressBinding.inflate(layoutInflater)
+                    progressDialogBinding = dialogBinding
+                    progressDialog = MaterialAlertDialogBuilder(this)
+                        .setTitle("正在导入媒体")
+                        .setView(dialogBinding.root)
+                        .setCancelable(false)
+                        .create()
+                    progressDialog?.show()
+                }
+
+                progressDialogBinding?.apply {
+                    progressIndicator.max = progress.total
+                    progressIndicator.progress = progress.current
+                    tvProgressText.text = "正在导入: ${progress.current}/${progress.total}\n${progress.currentItem.title}"
+                }
+            }
+            is ImportProgress.Success -> {
+                dismissProgressDialog()
+                val msg = "导入完成！成功: ${progress.successCount} 首，失败: ${progress.failedItems.size} 首"
+                Toast.makeText(this, msg, Toast.LENGTH_LONG).show()
+                viewModel.resetImportProgress()
+                if (progress.successCount > 0) {
+                    finish()
+                }
+            }
+            is ImportProgress.Failure -> {
+                dismissProgressDialog()
+                Toast.makeText(this, "导入失败，请重试", Toast.LENGTH_SHORT).show()
+                viewModel.resetImportProgress()
+            }
+        }
+    }
+
+    private fun dismissProgressDialog() {
+        progressDialog?.dismiss()
+        progressDialog = null
+        progressDialogBinding = null
+    }
+
+    override fun onDestroy() {
+        dismissProgressDialog()
+        scanRotationAnimator?.cancel()
+        super.onDestroy()
     }
 }

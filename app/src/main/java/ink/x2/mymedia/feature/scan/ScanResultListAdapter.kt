@@ -52,26 +52,6 @@ class ScanResultListAdapter(
             ItemMediaLinearBinding.inflate(LayoutInflater.from(parent.context), parent, false)
         return ViewHolder(binding)
     }
-
-
-    fun getIcon(media: LocalMediaItem): Uri {
-        return when (media.mediaType) {
-            MediaType.AUDIO -> {
-                ContentUris.withAppendedId(
-                    "content://media/external/audio/albumart".toUri(),
-                    media.albumId
-                )
-            }
-
-            MediaType.VIDEO -> {
-                ContentUris.withAppendedId(
-                    "content://media/external/audio/albumart".toUri(),
-                    media.albumId
-                )
-            }
-        }
-    }
-
     @SuppressLint("SetTextI18n")
     override fun onBindViewHolder(
         holder: ViewHolder,
@@ -79,11 +59,6 @@ class ScanResultListAdapter(
     ) {
         val item = getItem(position)
         holder.binding.apply {
-            Logger.d(item.media)
-            Glide.with(ivMediaIcon.context)
-                .load(item.media.albumBytes ?: getIcon(item.media))
-                .error(R.drawable.ic_music)
-                .into(ivMediaIcon)
             cbSelect.isChecked = item.isSelected
             tvMediaTitle.text = item.media.title
             tvMediaSubtitle.text = when (item.media.mediaType) {

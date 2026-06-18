@@ -26,17 +26,6 @@ class MediaStoreScanner @Inject constructor(
     @IoDispatcher private val ioDispatcher: CoroutineDispatcher
 ) {
 
-    private fun getEmbeddedPicture(uri: Uri): ByteArray? {
-        return try {
-            val retriever = android.media.MediaMetadataRetriever()
-            retriever.setDataSource(context, uri)
-            val bytes = retriever.embeddedPicture
-            retriever.release()
-            bytes
-        } catch (e: Exception) {
-            null
-        }
-    }
     @RequiresApi(Build.VERSION_CODES.TIRAMISU)
     suspend fun scanMedia(type: MediaType): AppResult<List<LocalMediaItem>> = withContext(ioDispatcher) {
         try {
@@ -121,13 +110,6 @@ class MediaStoreScanner @Inject constructor(
                 } else {
                     -1
                 }
-
-                val albumIdColumn = if (type == MediaType.AUDIO) {
-                    cursor.getColumnIndexOrThrow(MediaStore.Audio.Media.ALBUM_ID)
-                } else {
-                    -1
-                }
-
                 while (cursor.moveToNext()) {
                     val id = cursor.getLong(idColumn)
 
@@ -149,12 +131,6 @@ class MediaStoreScanner @Inject constructor(
                         size = cursor.getLong(sizeColumn),
                         mimeType = cursor.getString(mimeTypeColumn),
                         dateAdded = cursor.getLong(dateAddedColumn),
-                        albumId = cursor.getLong(albumIdColumn),
-                        albumBytes = if (type == MediaType.AUDIO) {
-                            getEmbeddedPicture(uri)
-                        } else {
-                            null
-                        },
                         mediaType = type
                     )
 
