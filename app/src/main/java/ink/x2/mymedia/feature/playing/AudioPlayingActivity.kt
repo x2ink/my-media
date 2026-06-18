@@ -13,17 +13,17 @@ import ink.x2.mymedia.playback.controller.PlaybackUiBinder
 import javax.inject.Inject
 import kotlin.getValue
 @AndroidEntryPoint
-class PlayingActivity  : BaseActivity<ActivityPlayingBinding>(){
+class AudioPlayingActivity  : BaseActivity<ActivityPlayingBinding>(){
     private val binding: ActivityPlayingBinding by lazy {
         ActivityPlayingBinding.inflate(layoutInflater)
     }
-    private val viewModel: PlayingViewModel by viewModels()
+    private val viewModel: AudioPlayingViewModel by viewModels()
     override fun getInsetAppBar(): View = binding.appBar
     @Inject
     lateinit var playbackController: PlaybackController
     companion object {
         fun startFrom(activity: Context) {
-            val intent = Intent(activity, PlayingActivity::class.java)
+            val intent = Intent(activity, AudioPlayingActivity::class.java)
             activity.startActivity(intent)
         }
     }

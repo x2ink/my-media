@@ -1,26 +1,29 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical"
-    android:padding="@dimen/dimens_8"
+    android:paddingHorizontal="@dimen/dimens_8"
     android:background="?attr/selectableItemBackground">
 
-    <!-- Video Card -->
+    <!-- Thumbnail Card with Selection Overlay -->
     <com.google.android.material.card.MaterialCardView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         style="@style/Widget.Material3.CardView.Filled"
-        app:cardCornerRadius="@dimen/dimens_12"
+        app:cardCornerRadius="@dimen/dimens_8"
         app:cardElevation="@dimen/dimens_0">
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
 
+            <!-- Media Thumbnail/Icon -->
+            <!-- 封面图（未播放时显示） -->
             <ImageView
-                android:id="@+id/iv_video_thumbnail"
+                android:id="@+id/iv_media_icon"
                 android:layout_width="@dimen/dimens_0"
                 android:layout_height="@dimen/dimens_0"
                 android:scaleType="centerCrop"
@@ -32,18 +35,102 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintEnd_toEndOf="parent" />
 
+            <!-- Play Icon Overlay (Centered) -->
+            <com.google.android.material.imageview.ShapeableImageView
+                android:id="@+id/iv_play_icon"
+                android:layout_width="@dimen/dimens_48"
+                android:layout_height="@dimen/dimens_48"
+                android:src="@drawable/ic_play"
+                android:padding="@dimen/dimens_8"
+                android:background="#80000000"
+                app:tint="@android:color/white"
+                app:shapeAppearanceOverlay="@style/ShapeAppearance.Material3.Corner.Full"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent" />
+
+            <!-- 视频播放容器（默认无内容，播放时动态添加 PlayerView） -->
+            <FrameLayout
+                android:id="@+id/fl_video_container"
+                android:layout_width="@dimen/dimens_0"
+                android:layout_height="@dimen/dimens_0"
+                app:layout_constraintTop_toTopOf="@id/iv_media_icon"
+                app:layout_constraintBottom_toBottomOf="@id/iv_media_icon"
+                app:layout_constraintStart_toStartOf="@id/iv_media_icon"
+                app:layout_constraintEnd_toEndOf="@id/iv_media_icon" />
+
+            <!-- Checkbox Overlay (Top-Left) -->
+            <com.google.android.material.checkbox.MaterialCheckBox
+                android:id="@+id/cb_select"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:minWidth="@dimen/dimens_0"
+                android:minHeight="@dimen/dimens_0"
+                android:layout_marginStart="@dimen/dimens_4"
+                android:layout_marginTop="@dimen/dimens_4"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
         </androidx.constraintlayout.widget.ConstraintLayout>
     </com.google.android.material.card.MaterialCardView>
 
-    <!-- Title -->
-    <TextView
-        android:id="@+id/tv_video_title"
+    <!-- Bottom info area: Title, Subtitle, and Edit Button -->
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="视频名称"
-        android:textAppearance="?attr/textAppearanceBodyMedium"
-        android:textStyle="bold"
-        android:layout_marginTop="@dimen/dimens_8"
-        android:ellipsize="end"
-        android:maxLines="2" />
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:layout_marginTop="@dimen/dimens_8">
+
+        <!-- Title & Subtitle Container -->
+        <LinearLayout
+            android:id="@+id/ll_media_content"
+            android:layout_width="@dimen/dimens_0"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/tv_media_title"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="媒体名称"
+                android:textAppearance="?attr/textAppearanceBodyMedium"
+                android:textStyle="bold"
+                android:ellipsize="end"
+                android:maxLines="1" />
+
+            <TextView
+                android:id="@+id/tv_media_subtitle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="作者 / 时长 / 大小"
+                android:textAppearance="?attr/textAppearanceBodySmall"
+                android:textColor="?android:attr/textColorSecondary"
+                android:layout_marginTop="@dimen/dimens_2"
+                android:ellipsize="end"
+                android:singleLine="true" />
+        </LinearLayout>
+
+        <!-- Edit Button on the Right -->
+        <ImageView
+            android:id="@+id/btn_edit"
+            android:layout_width="@dimen/dimens_36"
+            android:layout_height="@dimen/dimens_36"
+            android:padding="@dimen/dimens_8"
+            android:src="@drawable/ic_edit"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:contentDescription="编辑"
+            app:tint="?attr/colorOnSurfaceVariant"
+            android:layout_marginStart="@dimen/dimens_4" />
+
+        <!-- Legacy Hidden View for Backwards Compatibility -->
+        <ImageView
+            android:id="@+id/btn_more"
+            android:layout_width="@dimen/dimens_0"
+            android:layout_height="@dimen/dimens_0"
+            android:visibility="gone" />
+
+    </LinearLayout>
 </LinearLayout>

@@ -32,13 +32,16 @@ sealed interface ScanStatus{
 }
 data class MediaItemUiState(
     val media: LocalMediaItem,
-    val isSelected: Boolean = false
+    val isSelected: Boolean = false,
+    val isPlaying: Boolean = false
 )
 sealed interface ScanUiEvent{
-    data class OpenPlaying(
+    data class OpenAudioPlaying(
         val media: MediaItemUiState
     ) : ScanUiEvent
-
+    data class OpenVideoPlaying(
+        val media: MediaItemUiState
+    ) : ScanUiEvent
     data class ShowMessage(
         val stringId: Int
     ) : ScanUiEvent
@@ -128,6 +131,7 @@ class ScanViewModel @Inject constructor(
     }
     fun clearList(){
         _mediaList.value=mutableListOf()
+        playbackController.pause()
     }
     fun updateMediaList(mediaItem: MediaItemUiState) {
         _mediaList.update { currentList ->
@@ -149,9 +153,31 @@ class ScanViewModel @Inject constructor(
             updateListSelect(it,isAllSelectL)
         }
     }
-    fun openPlayingActivity(media: MediaItemUiState){
+    fun openAudioPlayingActivity(media: MediaItemUiState){
         viewModelScope.launch {
-            _uiEvent.emit(ScanUiEvent.OpenPlaying(media))
+            _uiEvent.emit(ScanUiEvent.OpenAudioPlaying(media))
+            playbackController.playMediaList(listOf(media.media.toMediaItem()),0)
+            playbackController.play()
+        }
+    }
+    fun openVideoPlayingFragment(media: MediaItemUiState){
+        viewModelScope.launch {
+            val isCurrentlyPlaying = _mediaList.value.find { it.media.id == media.media.id }?.isPlaying == true
+            if (isCurrentlyPlaying) {
+                if (playbackController.isPlaying.value) {
+                    playbackController.pause()
+                } else {
+                    playbackController.play()
+                }
+                return@launch
+            }
+
+            _mediaList.update { currentList ->
+                currentList.map { item ->
+                    item.copy(isPlaying = item.media.id == media.media.id)
+                }
+            }
+            _uiEvent.emit(ScanUiEvent.OpenVideoPlaying(media))
             playbackController.playMediaList(listOf(media.media.toMediaItem()),0)
             playbackController.play()
         }

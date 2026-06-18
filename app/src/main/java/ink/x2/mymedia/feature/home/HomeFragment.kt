@@ -9,7 +9,7 @@ import dagger.hilt.android.AndroidEntryPoint
 import ink.x2.mymedia.databinding.FragmentHomeBinding
 import ink.x2.mymedia.domain.model.MediaType
 import ink.x2.mymedia.domain.usecase.ScanMediaUseCase
-import ink.x2.mymedia.feature.playing.PlayingActivity
+import ink.x2.mymedia.feature.playing.AudioPlayingActivity
 import ink.x2.mymedia.feature.scan.ScanActivity
 import ink.x2.mymedia.playback.controller.PlaybackController
 import ink.x2.mymedia.playback.controller.PlaybackUiBinder
@@ -50,7 +50,7 @@ class HomeFragment: BaseFragment<FragmentHomeBinding>(R.layout.fragment_home) {
             ScanActivity.startFrom(requireContext(), MediaType.VIDEO)
         }
         binding.includeAudioCard.root.setOnClickListener {
-            PlayingActivity.startFrom(requireContext())
+            AudioPlayingActivity.startFrom(requireContext())
         }
     }
 }

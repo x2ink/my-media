@@ -80,6 +80,9 @@ class PlaybackController @Inject constructor(
             MediaController.releaseFuture(it)
         }
     }
+    fun getPlayer(): Player? {
+        return mediaController
+    }
     fun playMediaList(mediaItems: List<MediaItem>, startIndex: Int) {
         mediaController?.let { controller ->
             controller.setMediaItems(mediaItems)

@@ -44,7 +44,7 @@
             android:exported="false"
             android:windowSoftInputMode="adjustResize" />
         <activity
-            android:name=".feature.playing.PlayingActivity"
+            android:name=".feature.playing.AudioPlayingActivity"
             android:exported="false"
             android:windowSoftInputMode="adjustResize" />
     </application>

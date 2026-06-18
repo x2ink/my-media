@@ -14,6 +14,7 @@ import androidx.annotation.RequiresApi
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
+import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.SimpleItemAnimator
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
@@ -26,11 +27,22 @@ import ink.x2.mymedia.databinding.DialogEditScanResultBinding
 import ink.x2.mymedia.databinding.DialogImportProgressBinding
 import ink.x2.mymedia.domain.model.ImportProgress
 import ink.x2.mymedia.domain.model.MediaType
-import ink.x2.mymedia.feature.playing.PlayingActivity
+import ink.x2.mymedia.feature.playing.AudioPlayingActivity
 import kotlinx.coroutines.launch
+import javax.inject.Inject
+import ink.x2.mymedia.playback.controller.PlaybackController
+import androidx.media3.ui.PlayerView
+import android.view.ViewGroup
+import androidx.annotation.OptIn
+import ink.x2.mymedia.databinding.ItemMediaGridBinding
+import androidx.core.view.contains
+import androidx.media3.common.util.UnstableApi
 
 @AndroidEntryPoint
 class ScanActivity : BaseActivity<ActivityScanBinding>() {
+    @Inject
+    lateinit var playbackController: PlaybackController
+
     private val binding: ActivityScanBinding by lazy {
         ActivityScanBinding.inflate(layoutInflater)
     }
@@ -39,6 +51,21 @@ class ScanActivity : BaseActivity<ActivityScanBinding>() {
     private var scanRotationAnimator: android.animation.ObjectAnimator? = null
     private var progressDialog: AlertDialog? = null
     private var progressDialogBinding: DialogImportProgressBinding? = null
+    private var listPlayerView: PlayerView? = null
+
+    @OptIn(UnstableApi::class)
+    private fun getOrCreatePlayerView(): PlayerView {
+        var pv = listPlayerView
+        if (pv == null) {
+            pv = PlayerView(this).apply {
+                useController = true
+                resizeMode = androidx.media3.ui.AspectRatioFrameLayout.RESIZE_MODE_ZOOM
+            }
+            listPlayerView = pv
+        }
+        pv.player = playbackController.getPlayer()
+        return pv
+    }
 
     companion object {
         fun startFrom(activity: Context, mediaType: MediaType) {
@@ -49,6 +76,7 @@ class ScanActivity : BaseActivity<ActivityScanBinding>() {
     }
 
     override fun getInsetAppBar(): View = binding.appBar
+
     @RequiresApi(Build.VERSION_CODES.TIRAMISU)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -57,6 +85,7 @@ class ScanActivity : BaseActivity<ActivityScanBinding>() {
         initRecyclerView()
         observeViewModel()
     }
+
     @SuppressLint("InflateParams")
     private fun showInputDialog(mediaItem: MediaItemUiState) {
         val dialogBinding = DialogEditScanResultBinding.inflate(layoutInflater)
@@ -86,14 +115,50 @@ class ScanActivity : BaseActivity<ActivityScanBinding>() {
     }
 
     private fun initRecyclerView() {
-        scanAdapter = ScanResultListAdapter(onEditClick = { data ->
-            showInputDialog(data)
-        }, onSelectClick = { media, isSelected ->
-            viewModel.updateListSelect(media, isSelected)
-        }, onClickItem = {media->
-            viewModel.openPlayingActivity(media)
-        })
-        binding.rvScanResults.layoutManager = LinearLayoutManager(this)
+        scanAdapter = ScanResultListAdapter(
+            onEditClick = { data ->
+                showInputDialog(data)
+            },
+            onSelectClick = { media, isSelected ->
+                viewModel.updateListSelect(media, isSelected)
+            },
+            onClickItem = { media ->
+                when (viewModel.getMediaType()) {
+                    MediaType.AUDIO -> {
+                        viewModel.openAudioPlayingActivity(media)
+                    }
+
+                    MediaType.VIDEO -> {
+                        viewModel.openVideoPlayingFragment(media)
+                    }
+                }
+            },
+            onVideoPlayBind = { itemBinding, mediaItem ->
+                val playerView = getOrCreatePlayerView()
+                val parent = playerView.parent as? ViewGroup
+                if (parent != itemBinding.flVideoContainer) {
+                    parent?.removeView(playerView)
+                    itemBinding.flVideoContainer.removeAllViews()
+                    itemBinding.flVideoContainer.addView(
+                        playerView,
+                        ViewGroup.LayoutParams(
+                            ViewGroup.LayoutParams.MATCH_PARENT,
+                            ViewGroup.LayoutParams.MATCH_PARENT
+                        )
+                    )
+                }
+            },
+            onVideoPlayRecycle = { itemBinding ->
+                val playerView = listPlayerView ?: return@ScanResultListAdapter
+                if (itemBinding.flVideoContainer.contains(playerView)) {
+                    itemBinding.flVideoContainer.removeView(playerView)
+                }
+            }
+        )
+        binding.rvScanResults.layoutManager = when (viewModel.getMediaType()) {
+            MediaType.AUDIO -> LinearLayoutManager(this)
+            MediaType.VIDEO -> GridLayoutManager(this, 1)
+        }
         binding.rvScanResults.addItemDecoration(
             VerticalGapDecoration(
                 resources.getDimensionPixelSize(
@@ -102,7 +167,8 @@ class ScanActivity : BaseActivity<ActivityScanBinding>() {
             )
         )
         binding.rvScanResults.adapter = scanAdapter
-        (binding.rvScanResults.itemAnimator as? SimpleItemAnimator)?.supportsChangeAnimations = false
+        (binding.rvScanResults.itemAnimator as? SimpleItemAnimator)?.supportsChangeAnimations =
+            false
     }
 
     fun initListeners() {
@@ -110,9 +176,9 @@ class ScanActivity : BaseActivity<ActivityScanBinding>() {
             viewModel.clearList()
             viewModel.queryScanMediaResult()
         }
-        when(viewModel.getMediaType()){
-            MediaType.AUDIO->binding.toolbar.title=getString(R.string.scan_audio)
-            MediaType.VIDEO->binding.toolbar.title=getString(R.string.scan_video)
+        when (viewModel.getMediaType()) {
+            MediaType.AUDIO -> binding.toolbar.title = getString(R.string.scan_audio)
+            MediaType.VIDEO -> binding.toolbar.title = getString(R.string.scan_video)
         }
         binding.toolbar.setNavigationOnClickListener {
             finish()
@@ -124,35 +190,49 @@ class ScanActivity : BaseActivity<ActivityScanBinding>() {
             viewModel.importSelectedMedia()
         }
     }
-    fun startScanAni(){
-        scanRotationAnimator = android.animation.ObjectAnimator.ofFloat(binding.ivScanIcon, "rotation", 0f, 360f).apply {
-            duration = 1000
-            repeatCount = android.animation.ValueAnimator.INFINITE
-            interpolator = android.view.animation.LinearInterpolator()
-            start()
-        }
 
-        binding.btnScan.animate().translationY(resources.getDimension(R.dimen.dimens_64)).setDuration(300).start()
+    fun startScanAni() {
+        scanRotationAnimator =
+            android.animation.ObjectAnimator.ofFloat(binding.ivScanIcon, "rotation", 0f, 360f)
+                .apply {
+                    duration = 1000
+                    repeatCount = android.animation.ValueAnimator.INFINITE
+                    interpolator = android.view.animation.LinearInterpolator()
+                    start()
+                }
+
+        binding.btnScan.animate().translationY(resources.getDimension(R.dimen.dimens_64))
+            .setDuration(300).start()
         binding.tvResultsTitle.animate().alpha(0f).setDuration(300).start()
         binding.tvEmpty.animate().alpha(0f).setDuration(300).start()
         binding.rvScanResults.animate().alpha(0f).setDuration(300).start()
         binding.bottomBar.animate().alpha(0f).setDuration(300).start()
     }
-    fun endScanAni(){
+
+    fun endScanAni() {
         scanRotationAnimator?.cancel()
         scanRotationAnimator = null
         binding.ivScanIcon.rotation = 0f
 
         binding.btnScan.animate().translationY(0f).setDuration(300).start()
         binding.tvResultsTitle.animate().alpha(1f).setDuration(300).start()
-        
+
         val listIsEmpty = viewModel.mediaList.value.isEmpty()
         binding.tvEmpty.visibility = if (listIsEmpty) View.VISIBLE else View.GONE
         binding.tvEmpty.animate().alpha(if (listIsEmpty) 1f else 0f).setDuration(300).start()
-        
+
         binding.rvScanResults.animate().alpha(1f).setDuration(300).start()
         binding.bottomBar.animate().alpha(1f).setDuration(300).start()
     }
+
+    fun playVideo(media: MediaItemUiState) {
+        listPlayerView?.player = playbackController.getPlayer()
+        val position = scanAdapter.currentList.indexOfFirst { it.media.id == media.media.id }
+        if (position != -1) {
+            binding.rvScanResults.smoothScrollToPosition(position)
+        }
+    }
+
     @RequiresApi(Build.VERSION_CODES.TIRAMISU)
     private fun observeViewModel() {
         lifecycleScope.launch {
@@ -167,16 +247,16 @@ class ScanActivity : BaseActivity<ActivityScanBinding>() {
                 }
                 launch {
                     viewModel.scanStatue.collect {
-                        when(it){
-                            ScanStatus.Idel->{
+                        when (it) {
+                            ScanStatus.Idel -> {
 
                             }
 
-                            ScanStatus.Start->{
+                            ScanStatus.Start -> {
                                 startScanAni()
                             }
 
-                            ScanStatus.End->{
+                            ScanStatus.End -> {
                                 endScanAni()
                             }
                         }
@@ -188,15 +268,25 @@ class ScanActivity : BaseActivity<ActivityScanBinding>() {
                     }
                 }
                 launch {
-                    viewModel.uiEvent.collect { event->
-                        when(event){
-                            is ScanUiEvent.OpenPlaying->{
-                                PlayingActivity.startFrom(this@ScanActivity)
+                    viewModel.uiEvent.collect { event ->
+                        when (event) {
+                            is ScanUiEvent.OpenAudioPlaying -> {
+                                AudioPlayingActivity.startFrom(this@ScanActivity)
                             }
-                            is ScanUiEvent.ShowMessage->{
-                                Toast.makeText(this@ScanActivity, getString(event.stringId), Toast.LENGTH_SHORT).show()
+
+                            is ScanUiEvent.OpenVideoPlaying -> {
+                                playVideo(event.media)
                             }
-                            is ScanUiEvent.RequestMediaPermission->{
+
+                            is ScanUiEvent.ShowMessage -> {
+                                Toast.makeText(
+                                    this@ScanActivity,
+                                    getString(event.stringId),
+                                    Toast.LENGTH_SHORT
+                                ).show()
+                            }
+
+                            is ScanUiEvent.RequestMediaPermission -> {
                                 PermissionX.init(this@ScanActivity)
                                     .permissions(
                                         Manifest.permission.READ_MEDIA_AUDIO,
@@ -205,10 +295,21 @@ class ScanActivity : BaseActivity<ActivityScanBinding>() {
                                     )
                                     .request { allGranted, grantedList, deniedList ->
                                         if (allGranted) {
-                                            Toast.makeText(this@ScanActivity, getString(R.string.permission_all_granted), Toast.LENGTH_LONG).show()
+                                            Toast.makeText(
+                                                this@ScanActivity,
+                                                getString(R.string.permission_all_granted),
+                                                Toast.LENGTH_LONG
+                                            ).show()
                                             viewModel.queryScanMediaResult()
                                         } else {
-                                            Toast.makeText(this@ScanActivity, getString(R.string.permission_denied_list,deniedList), Toast.LENGTH_LONG).show()
+                                            Toast.makeText(
+                                                this@ScanActivity,
+                                                getString(
+                                                    R.string.permission_denied_list,
+                                                    deniedList
+                                                ),
+                                                Toast.LENGTH_LONG
+                                            ).show()
                                         }
                                     }
                             }
@@ -242,18 +343,22 @@ class ScanActivity : BaseActivity<ActivityScanBinding>() {
                 progressDialogBinding?.apply {
                     progressIndicator.max = progress.total
                     progressIndicator.progress = progress.current
-                    tvProgressText.text = "正在导入: ${progress.current}/${progress.total}\n${progress.currentItem.title}"
+                    tvProgressText.text =
+                        "正在导入: ${progress.current}/${progress.total}\n${progress.currentItem.title}"
                 }
             }
+
             is ImportProgress.Success -> {
                 dismissProgressDialog()
-                val msg = "导入完成！成功: ${progress.successCount} 首，失败: ${progress.failedItems.size} 首"
+                val msg =
+                    "导入完成！成功: ${progress.successCount} 首，失败: ${progress.failedItems.size} 首"
                 Toast.makeText(this, msg, Toast.LENGTH_LONG).show()
                 viewModel.resetImportProgress()
                 if (progress.successCount > 0) {
                     finish()
                 }
             }
+
             is ImportProgress.Failure -> {
                 dismissProgressDialog()
                 Toast.makeText(this, "导入失败，请重试", Toast.LENGTH_SHORT).show()
@@ -268,9 +373,16 @@ class ScanActivity : BaseActivity<ActivityScanBinding>() {
         progressDialogBinding = null
     }
 
+    override fun onPause() {
+        super.onPause()
+        playbackController.pause()
+    }
+
     override fun onDestroy() {
         dismissProgressDialog()
         scanRotationAnimator?.cancel()
+        listPlayerView?.player = null
+        listPlayerView = null
         super.onDestroy()
     }
 }
