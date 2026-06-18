@@ -1,9 +1,14 @@
 package ink.x2.mymedia.feature.scan
 
+import android.widget.Toast
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
+import ink.x2.mymedia.R
+import ink.x2.mymedia.core.common.AppError
+import ink.x2.mymedia.core.common.onError
+import ink.x2.mymedia.core.common.onSuccess
 import ink.x2.mymedia.domain.model.LocalMediaItem
 import ink.x2.mymedia.domain.model.MediaType
 import ink.x2.mymedia.domain.usecase.ScanMediaUseCase
@@ -25,7 +30,17 @@ data class MediaItemUiState(
     val media: LocalMediaItem,
     val isSelected: Boolean = false
 )
+sealed interface ScanUiEvent{
+    data class OpenPlaying(
+        val media: MediaItemUiState
+    ) : ScanUiEvent
 
+    data class ShowMessage(
+        val stringId: Int
+    ) : ScanUiEvent
+
+    data object RequestMediaPermission : ScanUiEvent
+}
 @HiltViewModel
 class ScanViewModel @Inject constructor(
     private val scanMediaUseCase: ScanMediaUseCase,
@@ -34,8 +49,10 @@ class ScanViewModel @Inject constructor(
 ) : ViewModel() {
     private val _mediaList = MutableStateFlow<List<MediaItemUiState>>(emptyList())
     val mediaList: StateFlow<List<MediaItemUiState>> = _mediaList.asStateFlow()
-    private val _openPlayingEvent = MutableSharedFlow<MediaItemUiState>()
-    val openPlayingEvent = _openPlayingEvent.asSharedFlow()
+    private val _uiEvent = MutableSharedFlow<ScanUiEvent>(
+        extraBufferCapacity = 1
+    )
+    val uiEvent = _uiEvent.asSharedFlow()
 
     private val mediaType: MediaType =
         savedStateHandle.get<MediaType>("media_type") ?: MediaType.AUDIO
@@ -44,13 +61,24 @@ class ScanViewModel @Inject constructor(
     }
     fun queryScanMediaResult() {
         viewModelScope.launch(Dispatchers.IO) {
-            val result = scanMediaUseCase.queryScanMediaResult(mediaType)
-            _mediaList.value = result.map {
-                MediaItemUiState(
-                    isSelected = false,
-                    media = it
-                )
-            }
+           scanMediaUseCase.queryScanMediaResult(mediaType).onSuccess { scanMediaList->
+                _mediaList.value = scanMediaList.map {
+                    MediaItemUiState(
+                        isSelected = false,
+                        media = it
+                    )
+                }
+            }.onError { error ->
+                when(error){
+                    AppError.SecurityException->{
+                        _uiEvent.emit(ScanUiEvent.RequestMediaPermission)
+                    }
+
+                    is AppError.Unknown ->{
+                        _uiEvent.emit(ScanUiEvent.ShowMessage(R.string.unknow))
+                    }
+                }
+           }
         }
     }
 
@@ -76,7 +104,7 @@ class ScanViewModel @Inject constructor(
     }
     fun openPlayingActivity(media: MediaItemUiState){
         viewModelScope.launch {
-            _openPlayingEvent.emit(media)
+            _uiEvent.emit(ScanUiEvent.OpenPlaying(media))
             playbackController.playMediaList(listOf(media.media.toMediaItem()),0)
             playbackController.play()
         }

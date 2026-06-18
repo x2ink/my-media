@@ -18,4 +18,5 @@
     <string name="occupied_space">占用空间</string>
     <string name="please_input_new_name">请输入新名称</string>
     <string name="open_source_repository">@x2ink</string>
+    <string name="unknow">未知错误</string>
 </resources>

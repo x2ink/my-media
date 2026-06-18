@@ -1,18 +1,23 @@
 package ink.x2.mymedia.feature.scan
 
+import android.Manifest
 import android.annotation.SuppressLint
 import android.app.AlertDialog
 import android.content.Context
 import android.content.Intent
+import android.os.Build
 import android.os.Bundle
 import android.view.View
+import android.widget.Toast
 import androidx.activity.viewModels
+import androidx.annotation.RequiresApi
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.SimpleItemAnimator
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
+import com.permissionx.guolindev.PermissionX
 import dagger.hilt.android.AndroidEntryPoint
 import ink.x2.mymedia.R
 import ink.x2.mymedia.core.base.BaseActivity
@@ -111,6 +116,7 @@ class ScanActivity : BaseActivity<ActivityScanBinding>() {
         }
     }
 
+    @RequiresApi(Build.VERSION_CODES.TIRAMISU)
     private fun observeViewModel() {
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
@@ -125,8 +131,31 @@ class ScanActivity : BaseActivity<ActivityScanBinding>() {
                 }
 
                 launch {
-                    viewModel.openPlayingEvent.collect { media ->
-                        PlayingActivity.startFrom(this@ScanActivity)
+                    viewModel.uiEvent.collect { event->
+                        when(event){
+                            is ScanUiEvent.OpenPlaying->{
+                                PlayingActivity.startFrom(this@ScanActivity)
+                            }
+                            is ScanUiEvent.ShowMessage->{
+                                Toast.makeText(this@ScanActivity, getString(event.stringId), Toast.LENGTH_SHORT).show()
+                            }
+                            is ScanUiEvent.RequestMediaPermission->{
+                                PermissionX.init(this@ScanActivity)
+                                    .permissions(
+                                        Manifest.permission.READ_MEDIA_AUDIO,
+                                        Manifest.permission.READ_MEDIA_VIDEO,
+                                        Manifest.permission.READ_EXTERNAL_STORAGE
+                                    )
+                                    .request { allGranted, grantedList, deniedList ->
+                                        if (allGranted) {
+                                            Toast.makeText(this@ScanActivity, getString(R.string.permission_all_granted), Toast.LENGTH_LONG).show()
+                                            viewModel.queryScanMediaResult()
+                                        } else {
+                                            Toast.makeText(this@ScanActivity, getString(R.string.permission_denied_list,deniedList), Toast.LENGTH_LONG).show()
+                                        }
+                                    }
+                            }
+                        }
                     }
                 }
             }
