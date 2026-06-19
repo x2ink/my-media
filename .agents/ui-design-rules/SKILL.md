@@ -82,3 +82,20 @@ To ensure seamless integration with Android View Binding:
     *   `binding.btnPlayPause`
     *   `binding.tvSongTitle`
 *   Keep IDs unique, clean, and self-describing.
+
+---
+
+## 6. Flat & Shadowless UI Constraints
+
+To maintain a clean, modern, and lightweight flat aesthetic, the following constraints are strictly enforced:
+1.  **No Drop Shadows or Elevation**:
+    *   Do NOT use `android:elevation` or `app:cardElevation` (set them to `0dp` or `@dimen/dimens_0` if required by a component).
+    *   Avoid shadows on any UI elements.
+2.  **No Card Containers**:
+    *   Avoid using `MaterialCardView` for list items, tasks, or sections. Use flat containers like `LinearLayout`, `ConstraintLayout`, or `FrameLayout` instead.
+3.  **Separation & Visual Structure**:
+    *   Use subtle background color variations (e.g., `?attr/colorSurfaceContainerLow` vs `?android:attr/colorBackground`) to group components.
+    *   Use thin, flat divider lines (like `View` with `1dp` height/width tinted with `?attr/colorOutlineVariant`) for separating sections and list items.
+4.  **Flat Items**:
+    *   All list items (downloading tasks, video rows) must be completely flat with no borders or card borders, aligning cleanly with the screen background.
+

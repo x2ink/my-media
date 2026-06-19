@@ -3,9 +3,10 @@
     <string name="permission_all_granted">全部权限已获取成功</string>
     <string name="permission_denied_list">以下权限被拒绝：%1$s</string>
     <string name="music">音乐</string>
-    <string name="home">首页</string>
+    <string name="home">下载</string>
     <string name="video">视频</string>
     <string name="setting">设置</string>
+    <string name="task">任务</string>
     <string name="scan_video">扫描视频</string>
     <string name="scan_audio">扫描音乐</string>
     <string name="scan_action">开始扫描</string>
@@ -14,9 +15,22 @@
     <string name="recent_play">最近播放</string>
     <string name="play">播放</string>
     <string name="continue_playing">继续播放</string>
-    <string name="library_statistics">媒体库统计</string>
+    <string name="library_statistics">存储统计</string>
     <string name="occupied_space">占用空间</string>
     <string name="please_input_new_name">请输入新名称</string>
     <string name="open_source_repository">@x2ink</string>
     <string name="unknow">未知错误</string>
+    <string name="magnet_downloader">磁力视频下载器</string>
+    <string name="new_download">新建磁力/种子下载</string>
+    <string name="magnet_input_hint">输入 magnet:?xt=urn:btih:... 或种子链接</string>
+    <string name="start_download">开始下载</string>
+    <string name="parse_magnet">解析磁力</string>
+    <string name="parsing_magnet">解析中...</string>
+    <string name="paste">粘贴</string>
+    <string name="select_torrent">选择种子</string>
+    <string name="downloading_tasks">下载任务</string>
+    <string name="completed_videos">已下载视频</string>
+    <string name="invalid_magnet_link">链接格式错误，请检查！</string>
+    <string name="tracker_list_refresh_success">Tracker 列表已更新：%1$d 个</string>
+    <string name="tracker_list_refresh_failed">Tracker 列表更新失败：%1$s</string>
 </resources>

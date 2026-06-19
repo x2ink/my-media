@@ -36,6 +36,27 @@ class PrivateMediaStorage @Inject constructor(
     private val videoDir: File by lazy {
         File(baseMediaDir, "video").apply { if (!exists()) mkdirs() }
     }
+    private val torrentVideoDownloadDir: File by lazy {
+        File(videoDir, "torrent").apply { if (!exists()) mkdirs() }
+    }
+
+    fun getTorrentVideoDir(): File = torrentVideoDownloadDir
+
+    fun calculateFileHash(file: File): String? {
+        return try {
+            file.inputStream().use { inputStream ->
+                val digest = MessageDigest.getInstance("SHA-256")
+                val buffer = ByteArray(8192)
+                var bytesRead: Int
+                while (inputStream.read(buffer).also { bytesRead = it } != -1) {
+                    digest.update(buffer, 0, bytesRead)
+                }
+                digest.digest().joinToString("") { "%02x".format(it) }
+            }
+        } catch (e: Exception) {
+            null
+        }
+    }
     fun calculateUriHash(context: Context, uri: Uri): String? {
         return try {
             context.contentResolver.openInputStream(uri)?.use { inputStream ->

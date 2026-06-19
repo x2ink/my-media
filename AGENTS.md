@@ -62,6 +62,7 @@
 3. **严禁主动引入或转换页面为 Jetpack Compose**，除非用户在 Request 中有明确要求。
 4. Fragment 基类需使用 `BaseFragment`，且其 `layoutId` 只用于声明加载的布局，严禁在基类中塞入具体业务代码。
 5. RecyclerView Adapter 必须优先使用 **ListAdapter + DiffUtil** 进行数据绑定，点击事件必须通过回调委托给 Fragment/ViewModel。
+6. **严禁使用卡片（CardView/MaterialCardView）、投影阴影等视觉层级**。全站采用 Flat（扁平化）且无阴影的风格，优先通过细分割线（如 `?attr/colorOutlineVariant`）或背景色微调来实现区域分割与分组。
 
 ---
 

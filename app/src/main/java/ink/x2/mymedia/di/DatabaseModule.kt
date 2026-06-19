@@ -9,6 +9,7 @@ import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import ink.x2.mymedia.data.local.db.AppDatabase
 import ink.x2.mymedia.data.local.db.dao.MediaDao
+import ink.x2.mymedia.data.local.db.dao.torrent.TorrentTaskDao
 import javax.inject.Singleton
 
 @Module
@@ -26,5 +27,11 @@ object DatabaseModule {
     @Singleton
     fun provideMediaDao(database: AppDatabase): MediaDao {
         return database.mediaDao()
+    }
+
+    @Provides
+    @Singleton
+    fun provideTorrentTaskDao(database: AppDatabase): TorrentTaskDao {
+        return database.torrentTaskDao()
     }
 }

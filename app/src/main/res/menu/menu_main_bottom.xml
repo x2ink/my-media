@@ -2,12 +2,13 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
     <item
         android:id="@+id/tab_home"
-        android:icon="@drawable/ic_home"
+        android:icon="@drawable/ic_import"
         android:title="@string/home" />
+
     <item
-        android:id="@+id/tab_audio"
-        android:icon="@drawable/ic_music"
-        android:title="@string/music" />
+        android:id="@+id/tab_task"
+        android:icon="@drawable/ic_task"
+        android:title="@string/task" />
 
     <item
         android:id="@+id/tab_video"
