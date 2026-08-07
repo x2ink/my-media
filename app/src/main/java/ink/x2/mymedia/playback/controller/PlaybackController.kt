@@ -2,6 +2,7 @@ package ink.x2.mymedia.playback.controller
 import android.content.ComponentName
 import androidx.media3.session.SessionToken
 import android.content.Context
+import android.os.Looper
 import androidx.media3.common.MediaItem
 import androidx.media3.common.Player
 import androidx.media3.session.MediaController
@@ -21,7 +22,7 @@ class PlaybackController @Inject constructor(
         SessionToken(context, ComponentName(context, PlaybackService::class.java))
     }
     private val controllerFuture by lazy {
-        MediaController.Builder(context,sessionToken).buildAsync()
+        MediaController.Builder(context,sessionToken).setApplicationLooper(Looper.getMainLooper()).buildAsync()
     }
     private var mediaController: MediaController? = null
     private val _isPlaying = MutableStateFlow(false)

@@ -1,16 +1,16 @@
-import org.jetbrains.kotlin.gradle.dsl.JvmTarget
+
 import com.google.protobuf.gradle.id
 plugins {
     id("kotlin-kapt")
     id("com.google.protobuf") version "0.10.0"
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
+    alias(libs.plugins.kotlin.compose)
     alias(libs.plugins.hilt.android)
 }
 
 android {
-    namespace = "ink.x2.mymedia"
-
+    namespace = "ink.x2.grpctest"
     compileSdk {
         version = release(36) {
             minorApiLevel = 1
@@ -18,7 +18,7 @@ android {
     }
 
     defaultConfig {
-        applicationId = "ink.x2.mymedia"
+        applicationId = "ink.x2.grpctest"
         minSdk = 30
         targetSdk = 36
         versionCode = 1
@@ -26,57 +26,46 @@ android {
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
-    
-    buildFeatures {
-        viewBinding = true
-        dataBinding = true
-    }
-    
+
     buildTypes {
         release {
-            optimization {
-                enable = false
-            }
+            isMinifyEnabled = false
+            proguardFiles(
+                getDefaultProguardFile("proguard-android-optimize.txt"),
+                "proguard-rules.pro"
+            )
         }
     }
-
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_21
-        targetCompatibility = JavaVersion.VERSION_21
+        sourceCompatibility = JavaVersion.VERSION_11
+        targetCompatibility = JavaVersion.VERSION_11
     }
-}
-
-kotlin {
-    compilerOptions {
-        jvmTarget.set(JvmTarget.JVM_21)
+    kotlinOptions {
+        jvmTarget = "11"
+    }
+    buildFeatures {
+        compose = true
     }
 }
 
 dependencies {
-    implementation(libs.androidx.constraintlayout)
-    implementation(libs.androidx.fragment.ktx)
-    implementation(libs.androidx.activity.ktx)
-    implementation(libs.androidx.room.runtime)
-    implementation(libs.androidx.room.ktx)
-    kapt(libs.androidx.room.compiler)
+    implementation(platform(libs.androidx.compose.bom))
+    implementation(libs.androidx.activity.compose)
+    implementation(libs.androidx.compose.material3)
+    implementation(libs.androidx.compose.ui)
+    implementation(libs.androidx.compose.ui.graphics)
+    implementation(libs.androidx.compose.ui.tooling.preview)
+    implementation(libs.androidx.core.ktx)
+    implementation(libs.androidx.lifecycle.runtime.ktx)
+    testImplementation(libs.junit)
     implementation(libs.hilt.android)
     kapt(libs.hilt.compiler)
-    implementation(libs.permissionx)
-    implementation(libs.androidx.appcompat)
-    implementation(libs.androidx.core.ktx)
-    implementation(libs.material)
-    implementation(libs.glide)
-    implementation(libs.fastjson2)
-    implementation(libs.logger)
-    implementation(libs.androidx.media3.exoplayer)
-    implementation(libs.androidx.media3.ui)
-    implementation(libs.androidx.media3.common)
-    implementation(libs.androidx.media3.session)
-    testImplementation(libs.junit)
-    testImplementation(libs.mockk)
-    testImplementation(libs.kotlinx.coroutines.test)
+    androidTestImplementation(platform(libs.androidx.compose.bom))
+    androidTestImplementation(libs.androidx.compose.ui.test.junit4)
     androidTestImplementation(libs.androidx.espresso.core)
     androidTestImplementation(libs.androidx.junit)
+    debugImplementation(libs.androidx.compose.ui.test.manifest)
+    debugImplementation(libs.androidx.compose.ui.tooling)
     implementation("com.google.protobuf:protobuf-javalite:3.25.9")
     implementation("io.grpc:grpc-okhttp:1.83.1")
     implementation("io.grpc:grpc-protobuf-lite:1.83.1")
@@ -88,11 +77,6 @@ hilt {
     enableAggregatingTask = false
 }
 
-tasks.withType<Test> {
-    testLogging {
-        showStandardStreams = true
-    }
-}
 protobuf {
     protoc {
         artifact = "com.google.protobuf:protoc:3.25.8"
