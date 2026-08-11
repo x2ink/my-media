@@ -39,7 +39,6 @@ android {
             }
         }
     }
-
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_21
         targetCompatibility = JavaVersion.VERSION_21
@@ -53,6 +52,7 @@ kotlin {
 }
 
 dependencies {
+    implementation(project(":aidl"))
     implementation(libs.androidx.constraintlayout)
     implementation(libs.androidx.fragment.ktx)
     implementation(libs.androidx.activity.ktx)

@@ -22,5 +22,7 @@
             </intent-filter>
         </activity>
     </application>
-
+    <queries>
+        <package android:name="ink.x2.mymedia" />
+    </queries>
 </manifest>

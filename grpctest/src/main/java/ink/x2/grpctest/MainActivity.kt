@@ -1,6 +1,8 @@
 package ink.x2.grpctest
 
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
@@ -11,13 +13,18 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.ui.Modifier
+import androidx.lifecycle.lifecycleScope
 import dagger.hilt.android.AndroidEntryPoint
+import ink.x2.grpctest.aidl.MediaAidlClient
 import ink.x2.grpctest.grpc.MediaGrpcClient
 import ink.x2.grpctest.ui.theme.MyMediaTheme
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
+    @Inject
+    lateinit var mediaAidlClient: MediaAidlClient
     @Inject
     lateinit var mediaGrpcClient: MediaGrpcClient
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -39,15 +46,24 @@ class MainActivity : ComponentActivity() {
                         }) {
                             Text("暂停")
                         }
+                        Button(onClick = {
+                            mediaAidlClient.play()
+                        }) {
+                            Text("播放")
+                        }
+                        Button(onClick = {
+                            mediaAidlClient.pause()
+                        }) {
+                            Text("暂停")
+                        }
                     }
                 }
             }
         }
     }
-    fun startPlay(){
 
-    }
-    fun stopPlay(){
-
+    override fun onStart() {
+        super.onStart()
+        mediaAidlClient.connect()
     }
 }

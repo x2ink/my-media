@@ -25,3 +25,4 @@ dependencyResolutionManagement {
 rootProject.name = "MyMedia"
 include(":app")
 include(":grpctest")
+include(":aidl")
