@@ -43,7 +43,6 @@
                     android:layout_height="@dimen/dimens_54"
                     android:background="?attr/colorSurfaceVariant"
                     android:scaleType="centerCrop"
-                    android:src="@drawable/ic_play"
                     app:shapeAppearanceOverlay="@style/ShapeAppearance.Material3.Corner.Small" />
 
                 <!-- Play Overlay icon centered -->
@@ -51,8 +50,7 @@
                     android:layout_width="@dimen/dimens_24"
                     android:layout_height="@dimen/dimens_24"
                     android:layout_gravity="center"
-                    android:src="@drawable/ic_play"
-                    app:tint="?attr/colorOnSurface"
+                    android:src="@drawable/ic_play_white"
                     android:alpha="0.8" />
             </FrameLayout>
 
@@ -82,15 +80,6 @@
                     android:textColor="?android:attr/textColorSecondary"
                     android:layout_marginTop="@dimen/dimens_2" />
             </LinearLayout>
-
-            <!-- Fullscreen Tonal Button -->
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/btn_video_fullscreen"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="全屏"
-                style="@style/Widget.Material3.Button.TonalButton"
-                android:layout_marginStart="@dimen/dimens_8" />
         </LinearLayout>
 
     </LinearLayout>

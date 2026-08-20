@@ -1,0 +1,9 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(rm app/src/main/res/drawable/ic_fullscreen_white.xml)",
+      "Bash(rm app/src/main/res/drawable/ic_fullscreen_exit_white.xml)",
+      "Bash(rm app/src/main/res/drawable/ic_pause_white.xml)"
+    ]
+  }
+}

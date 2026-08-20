@@ -35,9 +35,10 @@ import ink.x2.mymedia.playback.controller.PlaybackController
 import androidx.media3.ui.PlayerView
 import android.view.ViewGroup
 import androidx.annotation.OptIn
-import ink.x2.mymedia.databinding.ItemMediaGridBinding
 import androidx.core.view.contains
 import androidx.media3.common.util.UnstableApi
+import ink.x2.mymedia.databinding.ControllerVideoBinding
+import ink.x2.mymedia.feature.playing.VideoPlayingActivity
 
 @AndroidEntryPoint
 class ScanActivity : BaseActivity<ActivityScanBinding>() {
@@ -58,16 +59,32 @@ class ScanActivity : BaseActivity<ActivityScanBinding>() {
     private fun getOrCreatePlayerView(): PlayerView {
         var pv = listPlayerView
         if (pv == null) {
-            pv = PlayerView(this).apply {
-                useController = true
-                resizeMode = androidx.media3.ui.AspectRatioFrameLayout.RESIZE_MODE_ZOOM
+            val playerBinding =
+                ControllerVideoBinding.inflate(layoutInflater)
+            pv = playerBinding.playerView.apply {
+                setFullscreenButtonClickListener { isFullscreen ->
+                    if (isFullscreen) {
+                        listPlayerView?.player = null
+                        VideoPlayingActivity.startFrom(this@ScanActivity)
+                    } else {
+                        // 退出全屏
+                    }
+                }
+                player = playbackController.getPlayer()
             }
             listPlayerView = pv
         }
-        pv.player = playbackController.getPlayer()
         return pv
     }
 
+    @OptIn(UnstableApi::class)
+    override fun onResume() {
+        super.onResume()
+        listPlayerView?.apply {
+            player = playbackController.getPlayer()
+            setFullscreenButtonState(false)
+        }
+    }
     companion object {
         fun startFrom(activity: Context, mediaType: MediaType) {
             val intent = Intent(activity, ScanActivity::class.java)
@@ -238,7 +255,6 @@ class ScanActivity : BaseActivity<ActivityScanBinding>() {
     private fun observeViewModel() {
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
-
                 launch {
                     viewModel.mediaList.collect { list ->
                         binding.cbSelectAll.isChecked =
@@ -376,7 +392,6 @@ class ScanActivity : BaseActivity<ActivityScanBinding>() {
 
     override fun onPause() {
         super.onPause()
-        playbackController.pause()
     }
 
     override fun onDestroy() {

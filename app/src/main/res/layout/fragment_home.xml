@@ -15,13 +15,15 @@
 
         <!-- 音乐继续播放卡片 -->
         <include
+            android:visibility="gone"
             android:id="@+id/include_audio_card"
             layout="@layout/include_home_audio_card" />
 
         <!-- 视频继续播放卡片 -->
-<!--        <include-->
-<!--            android:id="@+id/include_video_card"-->
-<!--            layout="@layout/include_home_video_card" />-->
+        <include
+            android:visibility="gone"
+            android:id="@+id/include_video_card"
+            layout="@layout/include_home_video_card" />
 
         <!-- 2. 快捷功能按钮 -->
         <LinearLayout

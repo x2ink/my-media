@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- PlayerView 自定义控制层布局：ID 为 exo_* 的控件由 Media3 自动接线 -->
+<!-- 接入方式: playerView.setControllerLayoutId(R.layout.custom_player_control_view) -->
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#66000000"
+    tools:ignore="ContentDescription">
+
+    <!-- 中央大播放/暂停按钮: exo_play_pause 自动接线(点击切换+图标随状态更新,无障碍描述由框架设置) -->
+    <ImageButton
+        android:id="@+id/exo_play_pause"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:layout_gravity="center" />
+    <!-- src 为初始占位,播放/暂停图标由框架按状态自动切换 -->
+
+    <!-- 底部控制条: 当前时间 + 进度条 + 总时长 + 全屏按钮 -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:paddingStart="@dimen/dimens_12"
+        android:paddingEnd="@dimen/dimens_12"
+        android:paddingBottom="@dimen/dimens_8">
+
+        <!-- exo_position 自动接线: 播放中自动刷新当前进度文本 -->
+        <TextView
+            android:id="@+id/exo_position"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="monospace"
+            android:textColor="@android:color/white"
+            android:textSize="14sp" />
+
+        <!-- exo_progress 自动接线: 必须是 TimeBar 实现(DefaultTimeBar),不能用 SeekBar -->
+        <androidx.media3.ui.DefaultTimeBar
+            android:id="@+id/exo_progress"
+            android:layout_width="@dimen/dimens_0"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            app:bar_height="@dimen/dimens_2"
+            app:buffered_color="#40FFFFFF"
+            app:played_color="@android:color/white"
+            app:scrubber_color="@android:color/white"
+            app:unplayed_color="#40FFFFFF" />
+
+        <!-- exo_duration 自动接线: 自动显示总时长 -->
+        <TextView
+            android:id="@+id/exo_duration"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="monospace"
+            android:textColor="@android:color/white"
+            android:textSize="14sp" />
+
+        <ImageButton
+            android:src="@drawable/ic_fullscreen"
+            android:id="@+id/exo_fullscreen"
+            android:layout_width="@dimen/dimens_40"
+            android:layout_height="@dimen/dimens_40"
+            android:layout_marginStart="@dimen/dimens_8"
+            android:background="?attr/selectableItemBackgroundBorderless" />
+    </LinearLayout>
+
+</FrameLayout>

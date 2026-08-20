@@ -1,12 +1,15 @@
 package ink.x2.mymedia.playback.controller
 
 import android.view.View
+import android.widget.ImageView
 import android.widget.SeekBar
 import android.widget.TextView
+import androidx.core.net.toUri
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
+import com.bumptech.glide.Glide
 import com.google.android.material.button.MaterialButton
 import ink.x2.mymedia.R
 import ink.x2.mymedia.core.ext.toDurationString
@@ -24,38 +27,43 @@ class PlaybackUiBinder @Inject constructor(
 
     fun bind(
         cardView: View? = null,
-        titleView: TextView,
-        artistView: TextView,
-        playPauseBtn: MaterialButton,
-        seekBar: SeekBar,
+        titleView: TextView? = null,
+        artistView: TextView? = null,
+        playPauseBtn: MaterialButton? = null,
+        seekBar: SeekBar? = null,
         currentTimeTv: TextView? = null,
-        totalTimeTv: TextView? = null
+        totalTimeTv: TextView? = null,
+        coverView: ImageView?= null,
     ) {
         lifecycleOwner.lifecycleScope.launch {
             lifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
                 launch {
                     playbackController.currentMediaItem.collect { mediaItem ->
-                        cardView?.visibility = if (mediaItem != null) View.VISIBLE else View.GONE
-                        titleView.text = mediaItem?.mediaMetadata?.title ?: "暂无播放"
-                        artistView.text = mediaItem?.mediaMetadata?.artist ?: ""
+                        titleView?.text = mediaItem?.mediaMetadata?.title ?: "暂无播放"
+                        artistView?.text = mediaItem?.mediaMetadata?.artist ?: ""
+                        coverView?.let {
+                            Glide.with(coverView.context)
+                                .load(mediaItem?.mediaMetadata?.extras?.getString("uri")?.toUri())
+                                .into(coverView)
+                        }
                     }
                 }
                 launch {
                     playbackController.isPlaying.collect { isPlaying ->
                         val iconRes = if (isPlaying) R.drawable.ic_pause else R.drawable.ic_play
-                        playPauseBtn.setIconResource(iconRes)
+                        playPauseBtn?.setIconResource(iconRes)
                     }
                 }
             }
         }
-        playPauseBtn.setOnClickListener {
+        playPauseBtn?.setOnClickListener {
             if (playbackController.isPlaying.value) {
                 playbackController.pause()
             } else {
                 playbackController.play()
             }
         }
-        seekBar.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
+        seekBar?.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
             override fun onProgressChanged(sb: SeekBar?, progress: Int, fromUser: Boolean) {
                 if (fromUser) {
                     currentTimeTv?.text = progress.toLong().toDurationString()
@@ -81,8 +89,8 @@ class PlaybackUiBinder @Inject constructor(
                         val duration = playbackController.getDuration()
                         val position = playbackController.getCurrentPosition()
 
-                        seekBar.max = duration.toInt()
-                        seekBar.progress = position.toInt()
+                        seekBar?.max = duration.toInt()
+                        seekBar?.progress = position.toInt()
 
                         currentTimeTv?.text = position.toDurationString()
                         totalTimeTv?.text = duration.toDurationString()

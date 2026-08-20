@@ -3,18 +3,23 @@ package ink.x2.mymedia.feature.video
 import android.os.Bundle
 import android.view.View
 import android.view.ViewGroup
+import androidx.annotation.OptIn
 import androidx.core.widget.doAfterTextChanged
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
+import androidx.media3.common.util.UnstableApi
+import androidx.media3.ui.AspectRatioFrameLayout
 import androidx.media3.ui.PlayerView
 import androidx.recyclerview.widget.LinearLayoutManager
 import dagger.hilt.android.AndroidEntryPoint
 import ink.x2.mymedia.R
 import ink.x2.mymedia.core.base.BaseFragment
 import ink.x2.mymedia.core.ui.VerticalGapDecoration
+import ink.x2.mymedia.databinding.ControllerVideoBinding
 import ink.x2.mymedia.databinding.FragmentVideoBinding
+import ink.x2.mymedia.feature.playing.VideoPlayingActivity
 import ink.x2.mymedia.playback.controller.PlaybackController
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -32,16 +37,25 @@ class VideoFragment : BaseFragment<FragmentVideoBinding>(R.layout.fragment_video
     private lateinit var videoAdapter: VideoLibraryAdapter
     private var listPlayerView: PlayerView? = null
 
+    @OptIn(UnstableApi::class)
     private fun getOrCreatePlayerView(): PlayerView {
         var pv = listPlayerView
         if (pv == null) {
-            pv = PlayerView(requireContext()).apply {
-                useController = false
-                resizeMode = androidx.media3.ui.AspectRatioFrameLayout.RESIZE_MODE_ZOOM
+            val playerBinding =
+                ControllerVideoBinding.inflate(layoutInflater)
+            pv = playerBinding.playerView.apply {
+                setFullscreenButtonClickListener { isFullscreen ->
+                    if (isFullscreen) {
+                        listPlayerView?.player = null
+                        VideoPlayingActivity.startFrom(requireActivity())
+                    } else {
+                        // 退出全屏
+                    }
+                }
+                player = playbackController.getPlayer()
             }
             listPlayerView = pv
         }
-        pv.player = playbackController.getPlayer()
         return pv
     }
 
@@ -116,7 +130,14 @@ class VideoFragment : BaseFragment<FragmentVideoBinding>(R.layout.fragment_video
         super.onPause()
         viewModel.pausePlayback()
     }
-
+    @OptIn(UnstableApi::class)
+    override fun onResume() {
+        super.onResume()
+        listPlayerView?.apply {
+            player = playbackController.getPlayer()
+            setFullscreenButtonState(false)
+        }
+    }
     override fun onDestroyView() {
         listPlayerView?.player = null
         listPlayerView = null
