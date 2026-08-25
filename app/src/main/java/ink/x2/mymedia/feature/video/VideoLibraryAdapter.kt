@@ -14,6 +14,7 @@ import java.io.File
 
 class VideoLibraryAdapter(
     private val onItemClick: (VideoItemUiState) -> Unit,
+    private val onItemLongClick:(VideoItemUiState, View) -> Unit,
     private val onVideoPlayBind: ((ItemMediaGridBinding, VideoItemUiState) -> Unit)? = null,
     private val onVideoPlayRecycle: ((ItemMediaGridBinding) -> Unit)? = null
 ) : ListAdapter<VideoItemUiState, VideoLibraryAdapter.ViewHolder>(DiffCallback) {
@@ -53,11 +54,9 @@ class VideoLibraryAdapter(
             root.setOnClickListener {
                 onItemClick(item)
             }
-            llMediaContent.setOnClickListener {
-                onItemClick(item)
-            }
-            ivMediaIcon.setOnClickListener {
-                onItemClick(item)
+            root.setOnLongClickListener {view->
+                onItemLongClick(item,view)
+                true
             }
         }
     }

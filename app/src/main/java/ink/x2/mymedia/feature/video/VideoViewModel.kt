@@ -3,6 +3,8 @@ package ink.x2.mymedia.feature.video
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
+import ink.x2.mymedia.data.local.db.entity.MediaEntity
+import ink.x2.mymedia.data.mapper.toLocalMedia
 import ink.x2.mymedia.domain.model.LocalMedia
 import ink.x2.mymedia.domain.usecase.GetVideoLibraryUseCase
 import ink.x2.mymedia.playback.controller.PlaybackController
@@ -16,13 +18,13 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 data class VideoItemUiState(
-    val media: LocalMedia,
+    val media: MediaEntity,
     val isPlaying: Boolean = false
 )
 
 @HiltViewModel
 class VideoViewModel @Inject constructor(
-    private val getVideoLibraryUseCase: GetVideoLibraryUseCase,
+    getVideoLibraryUseCase: GetVideoLibraryUseCase,
     private val playbackController: PlaybackController
 ) : ViewModel() {
     private val _searchQuery = MutableStateFlow("")
@@ -67,7 +69,7 @@ class VideoViewModel @Inject constructor(
             }
 
             _playingMediaId.value = item.media.id
-            playbackController.playMediaList(listOf(item.media.toMediaItem()), 0)
+            playbackController.playMediaList(listOf(item.media.toLocalMedia().toMediaItem()), 0)
             playbackController.play()
         }
     }

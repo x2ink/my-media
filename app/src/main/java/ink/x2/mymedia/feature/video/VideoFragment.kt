@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.View
 import android.view.ViewGroup
 import androidx.annotation.OptIn
+import androidx.appcompat.widget.PopupMenu
 import androidx.core.widget.doAfterTextChanged
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
@@ -13,12 +14,17 @@ import androidx.media3.common.util.UnstableApi
 import androidx.media3.ui.AspectRatioFrameLayout
 import androidx.media3.ui.PlayerView
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.orhanobut.logger.Logger
 import dagger.hilt.android.AndroidEntryPoint
 import ink.x2.mymedia.R
 import ink.x2.mymedia.core.base.BaseFragment
+import ink.x2.mymedia.core.common.AppResult
+import ink.x2.mymedia.core.ext.toastText
 import ink.x2.mymedia.core.ui.VerticalGapDecoration
 import ink.x2.mymedia.databinding.ControllerVideoBinding
 import ink.x2.mymedia.databinding.FragmentVideoBinding
+import ink.x2.mymedia.domain.usecase.DeleteMediaItemUseCase
+import ink.x2.mymedia.domain.usecase.UpdateMediaInfoUseCase
 import ink.x2.mymedia.feature.playing.VideoPlayingActivity
 import ink.x2.mymedia.playback.controller.PlaybackController
 import kotlinx.coroutines.launch
@@ -29,6 +35,12 @@ class VideoFragment : BaseFragment<FragmentVideoBinding>(R.layout.fragment_video
     companion object {
         const val TITLE: String = "视频"
     }
+
+    @Inject
+    lateinit var updateMediaInfoUseCase: UpdateMediaInfoUseCase
+
+    @Inject
+    lateinit var deleteMediaItemUseCase: DeleteMediaItemUseCase
 
     @Inject
     lateinit var playbackController: PlaybackController
@@ -95,6 +107,47 @@ class VideoFragment : BaseFragment<FragmentVideoBinding>(R.layout.fragment_video
                 if (itemBinding.flVideoContainer.indexOfChild(playerView) != -1) {
                     itemBinding.flVideoContainer.removeView(playerView)
                 }
+            },
+            onItemLongClick = { mediaItem, view ->
+                PopupMenu(requireContext(), view).apply {
+                    menuInflater.inflate(R.menu.menu_video_item_actions, menu)
+                    setOnMenuItemClickListener { item ->
+                        when (item.itemId) {
+                            R.id.actions_edit -> {
+                                viewLifecycleOwner.lifecycleScope.launch {
+                                    when(updateMediaInfoUseCase(mediaItem.media)){
+                                        is AppResult.Success ->{
+                                            requireContext().toastText(R.string.edit_success)
+                                        }
+                                        is AppResult.Error->{
+                                            requireContext().toastText(R.string.edit_error)
+                                        }
+                                    }
+                                }
+                                true
+                            }
+
+                            R.id.actions_delete -> {
+                                viewLifecycleOwner.lifecycleScope.launch {
+                                    when(val result =deleteMediaItemUseCase(mediaItem.media)){
+                                        is AppResult.Success ->{
+                                            requireContext().toastText(R.string.del_success)
+                                        }
+                                        is AppResult.Error->{
+                                            Logger.d(result.error)
+                                            requireContext().toastText(R.string.del_error)
+                                        }
+                                    }
+                                }
+                                true
+                            }
+
+                            else -> false
+                        }
+                    }
+
+                    show()
+                }
             }
         )
         binding.rvVideoList.apply {
@@ -130,6 +183,7 @@ class VideoFragment : BaseFragment<FragmentVideoBinding>(R.layout.fragment_video
         super.onPause()
         viewModel.pausePlayback()
     }
+
     @OptIn(UnstableApi::class)
     override fun onResume() {
         super.onResume()
@@ -138,6 +192,7 @@ class VideoFragment : BaseFragment<FragmentVideoBinding>(R.layout.fragment_video
             setFullscreenButtonState(false)
         }
     }
+
     override fun onDestroyView() {
         listPlayerView?.player = null
         listPlayerView = null

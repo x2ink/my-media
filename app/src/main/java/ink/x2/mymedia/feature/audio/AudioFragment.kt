@@ -12,6 +12,7 @@ import dagger.hilt.android.AndroidEntryPoint
 import ink.x2.mymedia.R
 import ink.x2.mymedia.core.base.BaseFragment
 import ink.x2.mymedia.core.ui.VerticalGapDecoration
+import ink.x2.mymedia.data.mapper.toLocalMedia
 import ink.x2.mymedia.databinding.FragmentAudioBinding
 import ink.x2.mymedia.feature.playing.AudioPlayingActivity
 import kotlinx.coroutines.launch
@@ -64,7 +65,9 @@ class AudioFragment : BaseFragment<FragmentAudioBinding>(R.layout.fragment_audio
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
                 viewModel.audioList.collect { list ->
-                    audioAdapter.submitList(list)
+                    audioAdapter.submitList(list.map{
+                        it.toLocalMedia()
+                    })
                 }
             }
         }
