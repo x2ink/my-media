@@ -10,7 +10,7 @@ import javax.inject.Inject
 class GetVideoLibraryUseCase @Inject constructor(
     private val mediaRepository: MediaRepository
 ) {
-    operator fun invoke(): Flow<List<MediaEntity>> {
+    operator fun invoke(): Flow<List<LocalMedia>> {
         return mediaRepository.getMediaList(MediaType.VIDEO)
     }
 }

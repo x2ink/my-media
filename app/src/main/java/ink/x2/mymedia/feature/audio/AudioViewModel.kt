@@ -3,8 +3,6 @@ package ink.x2.mymedia.feature.audio
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
-import ink.x2.mymedia.data.local.db.entity.MediaEntity
-import ink.x2.mymedia.data.mapper.toLocalMedia
 import ink.x2.mymedia.domain.model.LocalMedia
 import ink.x2.mymedia.domain.usecase.GetAudioLibraryUseCase
 import ink.x2.mymedia.playback.controller.PlaybackController
@@ -24,7 +22,7 @@ class AudioViewModel @Inject constructor(
     private val _searchQuery = MutableStateFlow("")
     val searchQuery: StateFlow<String> = _searchQuery
 
-    val audioList: StateFlow<List<MediaEntity>> = combine(
+    val audioList: StateFlow<List<LocalMedia>> = combine(
         getAudioLibraryUseCase(),
         _searchQuery
     ) { list, query ->
@@ -50,9 +48,7 @@ class AudioViewModel @Inject constructor(
         val currentList = audioList.value
         val index = currentList.indexOfFirst { it.id == media.id }
         if (index != -1) {
-            playbackController.playMediaList(currentList.map {
-                it.toLocalMedia()
-            }.toMediaItemList(), index)
+            playbackController.playMediaList(currentList.toMediaItemList(), index)
             playbackController.play()
         }
     }

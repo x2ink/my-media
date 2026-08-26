@@ -1,9 +1,12 @@
 package ink.x2.mymedia.feature.video
 
+
 import android.os.Bundle
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.annotation.OptIn
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.widget.PopupMenu
 import androidx.core.widget.doAfterTextChanged
 import androidx.fragment.app.viewModels
@@ -11,9 +14,9 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.media3.common.util.UnstableApi
-import androidx.media3.ui.AspectRatioFrameLayout
 import androidx.media3.ui.PlayerView
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.orhanobut.logger.Logger
 import dagger.hilt.android.AndroidEntryPoint
 import ink.x2.mymedia.R
@@ -22,9 +25,10 @@ import ink.x2.mymedia.core.common.AppResult
 import ink.x2.mymedia.core.ext.toastText
 import ink.x2.mymedia.core.ui.VerticalGapDecoration
 import ink.x2.mymedia.databinding.ControllerVideoBinding
+import ink.x2.mymedia.databinding.DialogEditScanResultBinding
 import ink.x2.mymedia.databinding.FragmentVideoBinding
+import ink.x2.mymedia.domain.repository.MediaRepository
 import ink.x2.mymedia.domain.usecase.DeleteMediaItemUseCase
-import ink.x2.mymedia.domain.usecase.UpdateMediaInfoUseCase
 import ink.x2.mymedia.feature.playing.VideoPlayingActivity
 import ink.x2.mymedia.playback.controller.PlaybackController
 import kotlinx.coroutines.launch
@@ -35,12 +39,6 @@ class VideoFragment : BaseFragment<FragmentVideoBinding>(R.layout.fragment_video
     companion object {
         const val TITLE: String = "视频"
     }
-
-    @Inject
-    lateinit var updateMediaInfoUseCase: UpdateMediaInfoUseCase
-
-    @Inject
-    lateinit var deleteMediaItemUseCase: DeleteMediaItemUseCase
 
     @Inject
     lateinit var playbackController: PlaybackController
@@ -114,31 +112,33 @@ class VideoFragment : BaseFragment<FragmentVideoBinding>(R.layout.fragment_video
                     setOnMenuItemClickListener { item ->
                         when (item.itemId) {
                             R.id.actions_edit -> {
-                                viewLifecycleOwner.lifecycleScope.launch {
-                                    when(updateMediaInfoUseCase(mediaItem.media)){
-                                        is AppResult.Success ->{
-                                            requireContext().toastText(R.string.edit_success)
-                                        }
-                                        is AppResult.Error->{
-                                            requireContext().toastText(R.string.edit_error)
+                                val dialogBinding = DialogEditScanResultBinding.inflate(layoutInflater)
+                                MaterialAlertDialogBuilder(requireContext())
+                                    .setTitle("重命名")
+                                    .setView(dialogBinding.root)
+                                    .setNegativeButton("取消", null)
+                                    .setPositiveButton("确认", null)
+                                    .create()
+                                    .apply {
+                                        setOnShowListener {
+                                            getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener {
+                                                val text = dialogBinding.inputEditText.text?.toString()?.trim().orEmpty()
+                                                if (text.isEmpty()) {
+                                                    dialogBinding.inputLayout.error = "内容不能为空"
+                                                    return@setOnClickListener
+                                                }
+                                                dialogBinding.inputLayout.error = null
+                                                viewModel.updateMediaItemTitleById(text,mediaItem.media.id)
+                                                dismiss()
+                                            }
                                         }
                                     }
-                                }
+                                    .show()
                                 true
                             }
 
                             R.id.actions_delete -> {
-                                viewLifecycleOwner.lifecycleScope.launch {
-                                    when(val result =deleteMediaItemUseCase(mediaItem.media)){
-                                        is AppResult.Success ->{
-                                            requireContext().toastText(R.string.del_success)
-                                        }
-                                        is AppResult.Error->{
-                                            Logger.d(result.error)
-                                            requireContext().toastText(R.string.del_error)
-                                        }
-                                    }
-                                }
+                                viewModel.deleteMediaItem(mediaItem.media.id)
                                 true
                             }
 
@@ -172,8 +172,18 @@ class VideoFragment : BaseFragment<FragmentVideoBinding>(R.layout.fragment_video
     private fun observeViewModel() {
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
-                viewModel.videoList.collect { list ->
-                    videoAdapter.submitList(list)
+               launch {
+                   viewModel.videoList.collect { list ->
+                       videoAdapter.submitList(list)
+                   }
+               }
+                launch {
+                    viewModel.uiEvent.collect { event->
+                        when (event) {
+                            is VideoFragmentUiEvent.ShowMessage ->
+                                requireContext().toastText(event.stringId, Toast.LENGTH_LONG)
+                        }
+                    }
                 }
             }
         }
