@@ -19,6 +19,7 @@ import ink.x2.mymedia.feature.playing.VideoPlayingActivity
 import ink.x2.mymedia.feature.scan.ScanActivity
 import ink.x2.mymedia.playback.controller.PlaybackController
 import ink.x2.mymedia.playback.controller.PlaybackUiBinder
+import ink.x2.mymedia.widget.TabItemData
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 @AndroidEntryPoint
@@ -91,5 +92,24 @@ class HomeFragment: BaseFragment<FragmentHomeBinding>(R.layout.fragment_home) {
         binding.includeAudioCard.root.setOnClickListener {
             AudioPlayingActivity.startFrom(requireContext())
         }
+        binding.tabLayout.renderTabs(
+            listOf(
+                TabItemData(
+                    id = 1,
+                    title = "全部",
+                    count = 10
+                ),
+                TabItemData(
+                    id = 2,
+                    title = "视频",
+                    count = 5
+                ),
+                TabItemData(
+                    id = 3,
+                    title = "音乐",
+                    count = 0
+                )
+            )
+        )
     }
 }

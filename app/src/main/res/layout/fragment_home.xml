@@ -155,7 +155,10 @@
             android:textAppearance="?attr/textAppearanceTitleMedium"
             android:textStyle="bold"
             android:layout_marginBottom="@dimen/dimens_8" />
-
+        <ink.x2.mymedia.widget.CustomTabLayout
+            android:id="@+id/tabLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/rv_recent_play"
             android:layout_width="match_parent"
